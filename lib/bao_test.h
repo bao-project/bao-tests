@@ -1,5 +1,7 @@
-#ifndef BAO_TF_H
-#define BAO_TF_H
+#ifndef BAO_TEST_H
+#define BAO_TEST_H
+
+#include "stdio.h"
 
 struct bao_test
 {
@@ -41,7 +43,7 @@ struct bao_test
 	} while (0) \
 
 #define BAO_LOG_TESTS() do {            \
-        YELLOW();                       \ 
+        YELLOW();                       \
         printf("\n[BAO-TF] Report\n");  \
         COLOR_RESET();                  \
         if(__testframework_fails)       \
@@ -55,7 +57,7 @@ struct bao_test
 #define BAO_ASSERT_OP(x, y, op) do {                        \
 		if ( !(x op y)){                                    \
 			(*failures)++;                                  \
-			BAO_LOG_FAILURE();                              \                                               
+			BAO_LOG_FAILURE();                              \
 		}                                                   \
 	} while (0)
 
@@ -67,7 +69,7 @@ struct bao_test
         extern unsigned int __testframework_tests;          \
         extern unsigned int __testframework_fails;          \
         unsigned char failures = 0;                         \
-        YELLOW();                                           \ 
+        YELLOW();                                           \
         printf("[BAO-TF] Running "#suite"\t"#test"\n");     \
         COLOR_RESET();                                      \
         __testframework_tests++;                            \
@@ -86,6 +88,8 @@ struct bao_test
 // test framework Functions
 void run_all();
 void run_specific_test(char *suite, char *test);
-void run_suite(char *suite);
+int run_suite(char *suite);
+void bao_test_entry(void);
 
-#endif // BAO_TF_H
+
+#endif // BAO_TEST_H
