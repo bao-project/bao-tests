@@ -1,4 +1,4 @@
-- [Table of Contents](#table-of-contents)
+# Table of contents
 - [Test definition](#test-definition)
   * [Unit test](#unit-test)
   * [Test proprieties](#test-proprieties)
