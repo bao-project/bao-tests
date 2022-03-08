@@ -1,0 +1,34 @@
+platform_cfg:
+    platform: qemu-aarch64-virt
+    
+tests_cfg:
+    mut: 
+        vm_1:
+            suites:
+                suit1:
+                    tests:
+                        - test1
+                        - test2
+                suit2:
+                    tests:
+                        - test3
+                        - test4
+        vm_2:
+            suites:
+                suit3:
+                    tests:
+                        - test5
+                        - test6
+                suit4:
+                    tests:
+                        - test7
+                        - test8
+                        
+bao_cfg:
+    cross_compile: x
+    tool_cfg: x
+    #flags: 
+    
+bao_test_cfg:
+    log_level: 0
+    #artifacts: 
