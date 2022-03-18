@@ -24,4 +24,5 @@ include ci/ci.mk
 #TODO: Put instead $(call ci, format, $(c_srcs) $(c_hdrs)) 
 
 $(call ci, format, ./lib/bao_test.c ./lib/bao_weak.c ./lib/bao_test.h)
+$(call ci, tidy, ./lib/bao_test.c ./lib/bao_weak.c ./lib/bao_test.h)
 $(call ci, cppcheck, ./lib/bao_test.c ./lib/bao_weak.c ./lib/bao_test.h)
