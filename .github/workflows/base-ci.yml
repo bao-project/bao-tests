@@ -2,7 +2,7 @@ name: Bao component base workflow
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, dev ]
   pull_request:
   workflow_dispatch:
 
