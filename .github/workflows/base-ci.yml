@@ -1,0 +1,70 @@
+name: Bao component base workflow
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+
+  # build:
+  #   runs-on: ubuntu-latest
+  #   container: baoproject/bao:latest
+  #   strategy:
+  #     matrix:
+  #       platform: ["qemu-aarch64-virt", "qemu-riscv64-virt"]
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #       with:
+  #         submodules: recursive
+  #     - run: make PLATFORM=${{ matrix.platform }}
+
+  coding-style:
+    runs-on: ubuntu-latest
+    container: baoproject/bao:latest
+    strategy:
+      matrix:
+        platform: ["qemu-aarch64-virt", "qemu-riscv64-virt"]
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - run: make PLATFORM=${{ matrix.platform }} format-check
+
+  static-analysis:
+    runs-on: ubuntu-latest
+    container: baoproject/bao:latest
+    strategy:
+      matrix:
+        platform: ["qemu-aarch64-virt", "qemu-riscv64-virt"]
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - run: make PLATFORM=${{ matrix.platform }} tidy
+      - run: make PLATFORM=${{ matrix.platform }} cppcheck
+
+  python:
+    runs-on: ubuntu-latest
+    container: baoproject/bao:latest
+    strategy:
+      matrix:
+        platform: ["qemu-aarch64-virt", "qemu-riscv64-virt"]
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - run: make PLATFORM=${{ matrix.platform }} pylint
+
+  yaml:
+    runs-on: ubuntu-latest
+    container: baoproject/bao:latest
+    strategy:
+      matrix:
+        platform: ["qemu-aarch64-virt", "qemu-riscv64-virt"]
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - run: make PLATFORM=${{ matrix.platform }} yamllint
