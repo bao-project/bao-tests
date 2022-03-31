@@ -95,13 +95,14 @@ In order to use Bao Test Framework you have go throught the following steps:
 	}
 	```
 
-2. Add the following lines to your makefile (use the variable TEST_DIR to indicate the directory where all the file containing tests are. Additionally, the variables names C_SRC, INC_DIRS, and CFLAGS may have to be modified according to your makefile.)
+2. Add the following lines to your makefile (use the variable TEST_DIR to indicate the directory where all the file containing tests are. The variable REPO_DIR should point to the base directory of this repository. Additionally, the variables names C_SRC, INC_DIRS, and CFLAGS may have to be modified according to your makefile.)
 
 	```c
-    TEST_DIR:=$(SRC_DIR)/tests
-    include bao-tests/bao-test.mk
-    C_SRC+=$(BAO_TEST_SRCS)
-    INC_DIRS+=$(BAO_TEST_INC_DIR)
+    TESTS_DIR:=$(SRC_DIR)/tests
+    REPO_DIR:=$(SRC_DIR)/../bao-tests
+    include bao-tests/src/bao-test.mk
+    C_SRC += $(BAO_TEST_SRCS)
+    INC_DIRS += $(BAO_TEST_INC_DIR)
     CFLAGS += $(BAO_TEST_FLAGS)
 	```
 
