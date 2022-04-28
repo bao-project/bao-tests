@@ -13,7 +13,7 @@ jobs:
   #   container: baoproject/bao:latest
   #   strategy:
   #     matrix:
-  #       platform: ["qemu-aarch64-virt", "qemu-riscv64-virt"]
+  #       platform: ["qemu-aarch64-virt"]
   #   steps:
   #     - uses: actions/checkout@v2
   #       with:
@@ -25,7 +25,7 @@ jobs:
     container: baoproject/bao:latest
     strategy:
       matrix:
-        platform: ["qemu-aarch64-virt", "qemu-riscv64-virt"]
+        platform: ["qemu-aarch64-virt"]
     steps:
       - uses: actions/checkout@v2
         with:
@@ -37,7 +37,7 @@ jobs:
     container: baoproject/bao:latest
     strategy:
       matrix:
-        platform: ["qemu-aarch64-virt", "qemu-riscv64-virt"]
+        platform: ["qemu-aarch64-virt"]
     steps:
       - uses: actions/checkout@v2
         with:
@@ -50,7 +50,7 @@ jobs:
     container: baoproject/bao:latest
     strategy:
       matrix:
-        platform: ["qemu-aarch64-virt", "qemu-riscv64-virt"]
+        platform: ["qemu-aarch64-virt"]
     steps:
       - uses: actions/checkout@v2
         with:
@@ -62,7 +62,7 @@ jobs:
     container: baoproject/bao:latest
     strategy:
       matrix:
-        platform: ["qemu-aarch64-virt", "qemu-riscv64-virt"]
+        platform: ["qemu-aarch64-virt"]
     steps:
       - uses: actions/checkout@v2
         with:

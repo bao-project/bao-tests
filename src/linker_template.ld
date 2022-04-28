@@ -43,10 +43,10 @@ SECTIONS {
     }
 
     .testframework : {
-        __testframework_start = . ;
+        testframework_start = . ;
         *(.testframework.PRIO* .testframework.prio*)
         *(.testframework.*)
-        __testframework_end = . ;        
+        testframework_end = . ;        
     }
     
     .bss (NOLOAD) :  {	
