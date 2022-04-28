@@ -1,10 +1,9 @@
-#include "bao_test.h"
+#include <bao_test.h>
 #include <stdio.h>
 #include <string.h>
 
-extern unsigned int __testframework_start, __testframework_end;
-unsigned int __testframework_tests = 0;
-unsigned int __testframework_fails = 0;
+unsigned int __testframework_tests;
+unsigned int __testframework_fails;
 
 #ifndef SUITES
 #define SUITES ""
@@ -17,7 +16,7 @@ unsigned int __testframework_fails = 0;
 void run_all()
 {
     struct bao_test* ptr = (struct bao_test*)&__testframework_start;
-    for (; ptr < &__testframework_end; ptr++) {
+    for (; ptr < (struct bao_test*)&__testframework_end; ptr++) {
         ptr->func_ptr();
     }
 }
@@ -25,7 +24,7 @@ void run_all()
 void run_specific_test(char* suite, char* test)
 {
     struct bao_test* ptr = (struct bao_test*)&__testframework_start;
-    for (; ptr < &__testframework_end; ptr++) {
+    for (; ptr < (struct bao_test*)&__testframework_end; ptr++) {
         if (!strcmp(ptr->suite_name, suite))
             if (!strcmp(ptr->test_name, test))
                 ptr->func_ptr();
@@ -35,7 +34,7 @@ void run_specific_test(char* suite, char* test)
 int run_suite(char* suite)
 {
     struct bao_test* ptr = (struct bao_test*)&__testframework_start;
-    for (; ptr < &__testframework_end; ptr++) {
+    for (; ptr < (struct bao_test*)&__testframework_end; ptr++) {
         if (strcmp(ptr->suite_name, suite) == 0) {
             ptr->func_ptr();
         }
@@ -48,7 +47,6 @@ void bao_test_entry(void)
     char* end = suites + strlen(suites);
     char* ptr = suites;
     char suite[20];
-    int tests_executed = 0;
 
     if (strcmp(suites, "all") == 0) {
         run_all();
@@ -63,7 +61,7 @@ void bao_test_entry(void)
     }
 
     while (ptr <= end) {
-        sscanf(ptr, "%s", suite);
+        sscanf(ptr, "%19s", suite);
         ptr += strlen(suite) + 1;
         run_suite(suite);
     }

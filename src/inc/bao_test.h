@@ -1,7 +1,9 @@
 #ifndef BAO_TEST_H
 #define BAO_TEST_H
 
-#include "stdio.h"
+#include <stdio.h>
+
+extern unsigned int __testframework_start, __testframework_end;
 
 struct bao_test {
     const char* suite_name;
