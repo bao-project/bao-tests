@@ -6,9 +6,9 @@
 extern unsigned int testframework_start, testframework_end;
 
 struct bao_test {
+    void (*func_ptr)(void);
     const char* suite_name;
     const char* test_name;
-    void (*func_ptr)(void);
 };
 
 /* static int failures, tests;*/
@@ -90,9 +90,9 @@ struct bao_test {
     static void func_bao_test_##suite##_##test(unsigned char* failures)
 
 /* test framework Functions*/
-void run_all();
-void run_specific_test(char* suite, char* test);
-int run_suite(char* suite);
-void bao_test_entry(void);
+static inline void run_all();
+static inline void run_specific_test(char* suite, char* test);
+static inline void run_suite(char* suite);
+static inline void bao_test_entry(void);
 
 #endif // BAO_TEST_H

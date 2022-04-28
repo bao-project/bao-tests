@@ -10,7 +10,7 @@
 #define TESTS ""
 #endif
 
-const int total_chars = 20;
+static const int total_chars = 20;
 unsigned int testframework_tests;
 unsigned int testframework_fails;
 
@@ -35,7 +35,7 @@ void run_specific_test(char* suite, char* test)
     }
 }
 
-int run_suite(char* suite)
+void run_suite(char* suite)
 {
     struct bao_test* ptr = (struct bao_test*)&testframework_start;
     while (ptr != (struct bao_test*)&testframework_end) {
