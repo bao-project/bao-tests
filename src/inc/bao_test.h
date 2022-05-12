@@ -1,6 +1,10 @@
 #ifndef BAO_TEST_H
 #define BAO_TEST_H
 
+#ifndef TESTF_LOG_LEVEL
+#define TESTF_LOG_LEVEL 2
+#endif
+
 #include <stdio.h>
 
 extern unsigned int testframework_start, testframework_end;
@@ -21,6 +25,7 @@ struct bao_test {
 #define EXPECTED_EQ(x, y) BAO_ASSERT_OP(x, y, ==)
 #define EXPECTED_NE(x, y) BAO_ASSERT_OP(x, y, !=)
 
+#if (TESTF_LOG_LEVEL > 0)
 #define BAO_LOG_FAILURE()                                \
     do {                                                 \
         RED();                                           \
@@ -28,6 +33,9 @@ struct bao_test {
         COLOR_RESET();                                   \
         printf("File:%s Line:%u\n", __FILE__, __LINE__); \
     } while (0)
+#else
+#define BAO_LOG_FAILURE()
+#endif
 
 #define BAO_LOG_NOT_SUCCESS()                                                \
     do {                                                                     \
@@ -47,15 +55,20 @@ struct bao_test {
             testframework_tests - testframework_fails, testframework_fails); \
     } while (0)
 
-#define BAO_LOG_TESTS()                \
-    do {                               \
-        YELLOW();                      \
-        printf("\n[BAO-TF] Report\n"); \
-        COLOR_RESET();                 \
-        if (testframework_fails)       \
-            BAO_LOG_NOT_SUCCESS();     \
-        else                           \
-            BAO_LOG_SUCCESS();         \
+#define BAO_LOG_TESTS()                                                     \
+    do {                                                                    \
+        if (TESTF_LOG_LEVEL > 1) {                                          \
+            YELLOW();                                                       \
+            printf("\n[INFO] Final Report\n");                              \
+            COLOR_RESET();                                                  \
+            if (testframework_fails)                                        \
+                BAO_LOG_NOT_SUCCESS();                                      \
+            else                                                            \
+                BAO_LOG_SUCCESS();                                          \
+        }                                                                   \
+        printf("[TESTF-C] TOTAL#%d SUCCESS#%d FAIL#%d\n\n",                 \
+            testframework_tests, testframework_tests - testframework_fails, \
+            testframework_fails);                                           \
     } while (0)
 
 /* for now just compare int */
@@ -75,9 +88,11 @@ struct bao_test {
         extern unsigned int testframework_tests;                      \
         extern unsigned int testframework_fails;                      \
         unsigned char failures = 0;                                   \
-        YELLOW();                                                     \
-        printf("[BAO-TF] Running " #suite "\t" #test "\n");           \
-        COLOR_RESET();                                                \
+        if (TESTF_LOG_LEVEL > 1) {                                    \
+            YELLOW();                                                 \
+            printf("[INFO] Running " #suite "\t" #test "\n");         \
+            COLOR_RESET();                                            \
+        }                                                             \
         testframework_tests++;                                        \
         func_bao_test_##suite##_##test(&failures);                    \
         if (failures)                                                 \
@@ -93,6 +108,6 @@ struct bao_test {
 static inline void run_all();
 static inline void run_specific_test(char* suite, char* test);
 static inline void run_suite(char* suite);
-static inline void bao_test_entry(void);
+void bao_test_entry(void);
 
 #endif // BAO_TEST_H

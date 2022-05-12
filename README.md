@@ -105,13 +105,14 @@ In order to use Bao Test Framework you have go throught the following steps:
     INC_DIRS += $(BAO_TEST_INC_DIR)
     CFLAGS += $(BAO_TEST_FLAGS)
 	```
+(Note: If you are using the C library without the Python tool, make sure you add also delete the test build directory in your clean rule)
 
 3. Add to your source the entry point (bao_test_entry()) to our framework, where you feel it is correct.
 4. Create a .c file (or multiple) in the directory specified early, include bao_test.h and create tests according to the [test definition example](#Test template).
 5. Build your system normally adding the following variable to your make command:
 
 	```c
-	BAO_TF=1 -> mandatory to use the framework, otherwise no test will be executed
+	BAO_TEST=1 -> mandatory to use the framework, otherwise no test will be executed
     SUITES="suite1 suite2" -> to specify which suites need to be executed
     TESTS="test1 test2" -> to specify which tests are to bexecuted
 	```
