@@ -8,17 +8,17 @@ on:
 
 jobs:
 
-  # build:
-  #   runs-on: ubuntu-latest
-  #   container: baoproject/bao:latest
-  #   strategy:
-  #     matrix:
-  #       platform: ["qemu-aarch64-virt"]
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #       with:
-  #         submodules: recursive
-  #     - run: make PLATFORM=${{ matrix.platform }}
+  gitlint:
+    runs-on: ubuntu-latest
+    container: baoproject/bao:latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+          fetch-depth: 0
+      - run: >
+          git config --global --add safe.directory $(realpath .) &&
+          make gitlint GITLINT_BASE=${{ github.event.pull_request.base.sha }}
 
   coding-style:
     runs-on: ubuntu-latest
