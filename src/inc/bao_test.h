@@ -66,7 +66,7 @@ struct bao_test {
             else                                                            \
                 BAO_LOG_SUCCESS();                                          \
         }                                                                   \
-        printf("[TESTF-C] TOTAL#%d SUCCESS#%d FAIL#%d\n\n",                 \
+        printf("[TESTF-C] TOTAL#%u SUCCESS#%u FAIL#%u\n\n",                 \
             testframework_tests, testframework_tests - testframework_fails, \
             testframework_fails);                                           \
     } while (0)
