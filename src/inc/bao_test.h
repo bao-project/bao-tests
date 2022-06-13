@@ -33,21 +33,20 @@ struct bao_test {
 #define EXPECTED_EQ(x, y) BAO_ASSERT_OP(x, y, ==)
 #define EXPECTED_NE(x, y) BAO_ASSERT_OP(x, y, !=)
 
-#define BAO_INFO_TAG()                                  \
-    YELLOW();                                           \
-    printf("[INFO] ");                                  \
-    COLOR_RESET();                                      \
-    
-#define BAO_FAIL_TAG()                                  \
-    RED();                                              \
-    printf("[FAILURE] ");                               \
-    COLOR_RESET();                                      \
+#define BAO_INFO_TAG() \
+    YELLOW();          \
+    printf("[INFO] "); \
+    COLOR_RESET();
 
-#define BAO_SUCC_TAG()                                  \
-    GREEN();                                            \
-    printf("[SUCCESS] ");                               \
-    COLOR_RESET();                                      \
+#define BAO_FAIL_TAG()    \
+    RED();                \
+    printf("[FAILURE] "); \
+    COLOR_RESET();
 
+#define BAO_SUCC_TAG()    \
+    GREEN();              \
+    printf("[SUCCESS] "); \
+    COLOR_RESET();
 
 #if (TESTF_LOG_LEVEL > 0)
 #define BAO_LOG_FAILURE()                                \
