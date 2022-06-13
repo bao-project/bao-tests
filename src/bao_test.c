@@ -94,6 +94,20 @@ void bao_test_entry(void)
         }
     }
 
+    if(strlen(TESTS)!= 0){
+        while (test_ptr <= tests_end) {
+            sscanf(test_ptr, "%[^_]%*c%s",suite, test);
+            test_ptr += strlen(test) + 1 + strlen(suite) + 1;
+            res =run_specific_test(suite,test);
+            if (res == 0){
+                if(TESTF_LOG_LEVEL > 1){
+                    BAO_INFO_TAG();
+                    printf("Test «%s» from Suite «%s» does not exist.\n",test, suite);
+                }
+            }
+        }
+    }
+
     if (testframework_tests > 0) {
         BAO_LOG_TESTS();
     }else{
