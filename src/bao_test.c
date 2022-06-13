@@ -64,9 +64,8 @@ void bao_test_entry(void)
     char tests[] = TESTS;
     char* tests_end = tests + strlen(tests);
     char* test_ptr = tests;
-    char test[total_chars];
 
-    int res = 0;
+    int res;
 
     if (strcmp(suites, "all") == 0) {
         run_all();
@@ -80,13 +79,13 @@ void bao_test_entry(void)
         return;
     }
 
-    if(strlen(SUITES)!= 0){
+    if (strlen(SUITES) != 0) {
         while (suite_ptr <= suites_end) {
             sscanf(suite_ptr, "%19s", suite);
             suite_ptr += strlen(suite) + 1;
-            res =run_suite(suite);
-            if (res == 0){
-                if(TESTF_LOG_LEVEL > 1){
+            res = run_suite(suite);
+            if (res == 0) {
+                if (TESTF_LOG_LEVEL > 1) {
                     BAO_INFO_TAG();
                     printf("Suite «%s» does not exist.\n", suite);
                 }
@@ -94,15 +93,17 @@ void bao_test_entry(void)
         }
     }
 
-    if(strlen(TESTS)!= 0){
+    if (strlen(TESTS) != 0) {
         while (test_ptr <= tests_end) {
-            sscanf(test_ptr, "%[^_]%*c%s",suite, test);
+            char test[total_chars];
+            sscanf(test_ptr, "%19[^_]%*c%19s", suite, test);
             test_ptr += strlen(test) + 1 + strlen(suite) + 1;
-            res =run_specific_test(suite,test);
-            if (res == 0){
-                if(TESTF_LOG_LEVEL > 1){
+            res = run_specific_test(suite, test);
+            if (res == 0) {
+                if (TESTF_LOG_LEVEL > 1) {
                     BAO_INFO_TAG();
-                    printf("Test «%s» from Suite «%s» does not exist.\n",test, suite);
+                    printf("Test «%s» from Suite «%s» does not exist.\n", test,
+                        suite);
                 }
             }
         }
@@ -110,8 +111,8 @@ void bao_test_entry(void)
 
     if (testframework_tests > 0) {
         BAO_LOG_TESTS();
-    }else{
-        BAO_INFO_TAG();                                 
+    } else {
+        BAO_INFO_TAG();
         printf("No tests were executed!\n");
     }
     return;
