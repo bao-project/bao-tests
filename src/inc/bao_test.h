@@ -19,6 +19,7 @@
 #define TESTS ""
 #endif
 
+#include "testf_assert.h"
 #include <stdio.h>
 
 extern unsigned int testframework_start, testframework_end;
@@ -34,9 +35,6 @@ struct bao_test {
 #define GREEN()           printf("\033[1;32m")
 #define YELLOW()          printf("\033[1;33m")
 #define COLOR_RESET()     printf("\033[0m")
-
-#define EXPECTED_EQ(x, y) BAO_ASSERT_OP(x, y, ==)
-#define EXPECTED_NE(x, y) BAO_ASSERT_OP(x, y, !=)
 
 #define BAO_INFO_TAG() \
     YELLOW();          \
@@ -54,10 +52,10 @@ struct bao_test {
     COLOR_RESET();
 
 #if (TESTF_LOG_LEVEL > 0)
-#define BAO_LOG_FAILURE()                                \
-    do {                                                 \
-        BAO_FAIL_TAG();                                  \
-        printf("File:%s Line:%u\n", __FILE__, __LINE__); \
+#define BAO_LOG_FAILURE()                                             \
+    do {                                                              \
+        BAO_FAIL_TAG();                                               \
+        printf("\n    File: %s\n    Line: %u\n", __FILE__, __LINE__); \
     } while (0)
 #else
 #define BAO_LOG_FAILURE()
@@ -90,14 +88,6 @@ struct bao_test {
         printf("[TESTF-C] TOTAL#%u SUCCESS#%u FAIL#%u\n\n",                 \
             testframework_tests, testframework_tests - testframework_fails, \
             testframework_fails);                                           \
-    } while (0)
-
-#define BAO_ASSERT_OP(x, y, op) \
-    do {                        \
-        if (!(x op y)) {        \
-            (*failures)++;      \
-            BAO_LOG_FAILURE();  \
-        }                       \
     } while (0)
 
 #define BAO_TEST(suite, test)                                         \
