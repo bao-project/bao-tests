@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2021-2023, Bao Project (www.bao-project.com). All rights reserved.
+ * Copyright (c) 2021-2023, Bao Project (www.bao-project.com). All rights
+ * reserved.
  *
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -8,6 +9,5 @@
 
 void bao_test_entry(void)
 {
-
     printf("\nWEAK! - To be removed\n");
 }

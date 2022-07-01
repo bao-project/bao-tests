@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2021-2023, Bao Project (www.bao-project.com). All rights reserved.
+ * Copyright (c) 2021-2023, Bao Project (www.bao-project.com). All rights
+ * reserved.
  *
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -30,11 +31,10 @@ struct bao_test {
     const char* test_name;
 };
 
-
-#define RED()             printf("\033[1;31m")
-#define GREEN()           printf("\033[1;32m")
-#define YELLOW()          printf("\033[1;33m")
-#define COLOR_RESET()     printf("\033[0m")
+#define RED()         printf("\033[1;31m")
+#define GREEN()       printf("\033[1;32m")
+#define YELLOW()      printf("\033[1;33m")
+#define COLOR_RESET() printf("\033[0m")
 
 #define BAO_INFO_TAG() \
     YELLOW();          \
