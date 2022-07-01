@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2021-2023, Bao Project (www.bao-project.com). All rights reserved.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 #ifndef BAO_TEST_H
 #define BAO_TEST_H
 
@@ -23,7 +29,6 @@ struct bao_test {
     const char* test_name;
 };
 
-/* static int failures, tests;*/
 
 #define RED()             printf("\033[1;31m")
 #define GREEN()           printf("\033[1;32m")
@@ -87,7 +92,6 @@ struct bao_test {
             testframework_fails);                                           \
     } while (0)
 
-/* for now just compare int */
 #define BAO_ASSERT_OP(x, y, op) \
     do {                        \
         if (!(x op y)) {        \
@@ -96,7 +100,6 @@ struct bao_test {
         }                       \
     } while (0)
 
-/* TODO: Add a verbose define to print */
 #define BAO_TEST(suite, test)                                         \
     static void func_bao_test_##suite##_##test(unsigned char*);       \
     static void func_bao_test_TBD_##suite##_##test(void)              \
@@ -119,7 +122,6 @@ struct bao_test {
         .func_ptr = func_bao_test_TBD_##suite##_##test };             \
     static void func_bao_test_##suite##_##test(unsigned char* failures)
 
-/* test framework Functions*/
 static inline void run_all();
 static inline int run_specific_test(char* suite, char* test);
 static inline int run_suite(char* suite);
