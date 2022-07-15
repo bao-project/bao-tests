@@ -1,0 +1,10 @@
+---
+tests_cfg:
+  mut:
+    baremetal:
+      suites:
+        ABCD:
+          - test1
+          - test3
+        XPTO:
+          - Fail10
