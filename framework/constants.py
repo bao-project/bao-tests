@@ -1,9 +1,18 @@
-
+"""
+    Constants to be configured
+"""
 # Text coloring
-red_text = '\033[31m'
-green_text = '\033[32m'
-blue_text = '\033[34m'
-reset_color = '\033[0m'
+RED_TEXT = '\033[31m'
+GREEN_TEXT = '\033[32m'
+BLUE_TEXT = '\033[34m'
+RESET_COLOR = '\033[0m'
+
+# UART concifgs
+UART_BAUDRATE = 115200
+UART_TIMEOUT = 0.01
+UART_HS_MAXTRIALS = 50
+UART_HS_CODE = '$$$$$$$'
+TEST_RESULTS = ''
 
 # Platform/architecture dictionary
 plat_arch_dict = {
@@ -16,5 +25,10 @@ plat_arch_dict = {
     "qemu-riscv64-virt" : "riscv"	    # QEMU RV64 virt
 }
 
+plat_toolchain_dict = {
+    "aarch64" : "aarch64-none-elf",
+    "riscv" : "riscv64-uknown-elf"
+}
+
 # Directories
-main_dir = './bao-demos/'
+MAIN_DIR = '../'
