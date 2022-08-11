@@ -1,10 +1,13 @@
 """
-UART utils submodule
+    Copyright (c) 2021-2023, Bao Project (www.bao-project.com). All rights reserved.
+
+    SPDX-License-Identifier: Apache-2.0
+
+    UART utils submodule
 """
-import os
 import subprocess
 import time
-from serial import Serial
+import serial
 import constants as cons
 
 MAX_TRIALS = 1000
@@ -28,19 +31,26 @@ def diff_ports(ports_init, ports_end):
     return diff
 
 
-def listener(port):
+def listener(ser_port):
     """
     Listener to receive test results
     """
+
+    # Send run command
+    tx_buffer = "[TESTF-PY] run\n"
+    ser_port.write(tx_buffer.encode())
+
+    # Wait for response
+    time.sleep(0.5)
+
     # continuously listen to commands on the master device
     while cons.TEST_RESULTS == '':
         res = b""
-        while not res.endswith(b"#$#\r\n"):
-            # keep reading one byte at a time until we have a full line
-            res += os.read(port, 1)
+        while not (res.endswith(b"\r\n") and b"[TESTF-C]" in res):
+            res += ser_port.read(64)
             if res == b'':
-                print("res: ", res)
-                time.sleep(0.2)
+                print("res list: ", res)
+                ser_port.write(b"[TESTF-PY] run")
 
         res_str = str(res)
         res_str = res_str.replace('\\r\\n', '\r\n')[2:-1]
@@ -55,43 +65,44 @@ def listener(port):
                 cons.TEST_RESULTS = line
 
 
-def establish_connection(port):
-    """
-    Establish connection between test framework and platform
-    """
-    file_desc = None
-    port_name = '/dev/pts/' + port
-    print("Connecting to ", port_name, " ...")
-
-    try:
-        file_desc = os.open(port_name, os.O_RDWR)
-    except OSError:
-        file_desc = None
-        print("Port ", port_name, " not available")
-    return file_desc
-
-
 def serial_handshake(port):
     """
     Validate connection between test framework and platform
     """
-    port_name = os.ttyname(port)
-    ser = Serial(port_name, cons.UART_BAUDRATE, timeout=cons.UART_TIMEOUT)
-    ack_signal = []
-    res = b""
-    for char in cons.UART_HS_CODE:
-        ser.write(char.encode())
-        trials = 0
-        while not res.endswith(b"\n") and trials < cons.UART_HS_MAXTRIALS:
-            # keep reading one byte at a time until we have a full line
-            res += ser.read(1)
-            # res += os.read(port, 1)
-            trials += 1
-            time.sleep(1 / 4000)
-        ack_signal.append(res[0:3].decode())
-        res = b""
 
-    if ack_signal.count('#$#') > 5:
-        return port
+    port_name = '/dev/pts/' + str(port)
+    ser = serial.Serial(port_name,
+                        cons.UART_BAUDRATE,
+                        timeout=cons.UART_TIMEOUT
+                        )
+    print(cons.BLUE_TEXT +
+          "Connecting to " +
+          port_name +
+          "..." +
+          cons.RESET_COLOR)
 
+    ser.close()
+    ser.open()
+    time.sleep(2)
+
+    # Send init command
+    tx_buffer = "[TESTF-PY] init\n"
+    ser.write(tx_buffer.encode())
+
+    # Wait for response
+    time.sleep(0.5)
+
+    # Read init command
+    rx_buffer = ser.readline(64)
+
+    # If acknowledge received, return serial port
+    rx_tag = bytes(cons.C_TAG + ' init', 'ascii')
+
+    if rx_tag in rx_buffer:
+        return ser
+
+    print(cons.RED_TEXT +
+          "Unable to connect to " +
+          port_name +
+          cons.RESET_COLOR)
     return None

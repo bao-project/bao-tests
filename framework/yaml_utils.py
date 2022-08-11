@@ -1,5 +1,9 @@
 """
-Yaml utils modules to parse config files
+    Copyright (c) 2021-2023, Bao Project (www.bao-project.com). All rights reserved.
+
+    SPDX-License-Identifier: Apache-2.0
+
+    Yaml utils modules to parse config files
 """
 import os
 import re
@@ -48,7 +52,6 @@ class YAMLTestCfg:
         self.config = yaml_data
         self.n_mut = len(self.config['tests_cfg']['mut'])
         self.list_mut = list(self.config['tests_cfg']['mut'])
-        # self.architecture = cons.plat_arch_dict[self.platform]
 
     def set_mut_tests(self, mut):
         """
