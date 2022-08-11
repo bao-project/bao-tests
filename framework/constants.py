@@ -1,4 +1,8 @@
 """
+    Copyright (c) 2021-2023, Bao Project (www.bao-project.com). All rights reserved.
+
+    SPDX-License-Identifier: Apache-2.0
+
     Constants to be configured
 """
 # Text coloring
@@ -9,13 +13,11 @@ RESET_COLOR = '\033[0m'
 
 # UART concifgs
 UART_BAUDRATE = 115200
-UART_TIMEOUT = 0.01
-UART_HS_MAXTRIALS = 50
-UART_HS_CODE = '$$$$$$$'
+UART_TIMEOUT = 1
 TEST_RESULTS = ''
 
 # Platform/architecture dictionary
-plat_arch_dict = {
+PLAT_ARCH_DICT = {
     "zcu102" : "aarch64",               # Xilinx ZCU102
     "zcu104" : "aarch64",               # Xilinx ZCU104
     "imx8qm" : "aarch64",               # NXP i.MX8QM
@@ -25,10 +27,13 @@ plat_arch_dict = {
     "qemu-riscv64-virt" : "riscv"	    # QEMU RV64 virt
 }
 
-plat_toolchain_dict = {
+PLAT_TOOLCHAIN_DICT = {
     "aarch64" : "aarch64-none-elf",
     "riscv" : "riscv64-uknown-elf"
 }
 
 # Directories
 MAIN_DIR = '../'
+
+PYTHON_TAG = "[TESTF-PY]"
+C_TAG = "[TESTF-C]"

@@ -1,4 +1,8 @@
 """
+Copyright (c) 2021-2023, Bao Project (www.bao-project.com). All rights reserved.
+
+SPDX-License-Identifier: Apache-2.0
+
 Test framework main file
 """
 import argparse
@@ -7,6 +11,7 @@ import threading
 import time
 import os
 import subprocess
+import shutil
 import uart
 import constants as cons
 import yaml_utils as yutils
@@ -17,33 +22,38 @@ from test_run import Runner
 CFG_YAML_PATH = './config.yaml'
 MAKE_LIST = []
 
-parser = argparse.ArgumentParser(description="Bao Testing Framework")
-parser.add_argument("--platform", help="Test target platform.")
+PARSER = argparse.ArgumentParser(description="Bao Testing Framework")
+PARSER.add_argument("--platform", help="Test target platform.")
 
 if __name__ == '__main__':
 
     print(cons.BLUE_TEXT + "Framework init..." + cons.RESET_COLOR)
 
-    # Parser - Load test config from yaml file
-    yaml_cfg_data = yutils.load_config(CFG_YAML_PATH)
-    if yaml_cfg_data is not None:
-        platform_cfg = yutils.YAMLPatformCfg(yaml_cfg_data)
-        PLAT_IDX = 0
-        for platform in platform_cfg.platforms:
-            print(cons.BLUE_TEXT + "Testing platformn: " + platform + cons.RESET_COLOR)
-            architecture = cons.plat_arch_dict[platform]
+    if os.path.isdir("./__pycache__"):
+        shutil.rmtree("./__pycache__")
+    if os.path.isdir("./.idea"):
+        shutil.rmtree("./.idea")
 
-            if platform_cfg.cross_compile is not None \
-                    and len(platform_cfg.platforms) == len(platform_cfg.cross_compile):
-                cross_compile = platform_cfg.cross_compile[PLAT_IDX]
+    # Parser - Load test config from yaml files
+    YAML_CFG_DATA = yutils.load_config(CFG_YAML_PATH)
+    if YAML_CFG_DATA is not None:
+        PLATFORM_CFG = yutils.YAMLPatformCfg(YAML_CFG_DATA)
+        PLAT_IDX = 0
+        for platform in PLATFORM_CFG.platforms:
+            print(cons.BLUE_TEXT + "Testing platformn: " + platform + cons.RESET_COLOR)
+            architecture = cons.PLAT_ARCH_DICT[platform]
+
+            if PLATFORM_CFG.cross_compile is not None \
+                    and len(PLATFORM_CFG.platforms) == len(PLATFORM_CFG.cross_compile):
+                cross_compile = PLATFORM_CFG.cross_compile[PLAT_IDX]
                 PLAT_IDX = PLAT_IDX + 1
             else:
-                toolchain = cons.plat_toolchain_dict[architecture]
-                cross_compile = yutils.select_toolchain(toolchain, platform_cfg.toolchain_path)
-                cross_compile = platform_cfg.toolchain_path + cross_compile + '/bin/' \
+                toolchain = cons.PLAT_TOOLCHAIN_DICT[architecture]
+                cross_compile = yutils.select_toolchain(toolchain, PLATFORM_CFG.toolchain_path)
+                cross_compile = PLATFORM_CFG.toolchain_path + cross_compile + '/bin/' \
                                 + toolchain + "-"
 
-            for test_setup in platform_cfg.setup_cfg:
+            for test_setup in PLATFORM_CFG.setup_cfg:
                 print(cons.BLUE_TEXT + "Test config: " + test_setup + cons.RESET_COLOR)
 
                 test_yaml_data = yutils.load_config(test_setup)
@@ -64,7 +74,7 @@ if __name__ == '__main__':
 
                     print(cons.BLUE_TEXT + "Building setup..." + cons.RESET_COLOR)
                     test_runner.build_setup(tests_list=test_config.make_cmd,
-                                            log_lvl=platform_cfg.log_level,
+                                            log_lvl=PLATFORM_CFG.log_level,
                                             csrcs=test_config.csrcs)
 
                     # Logging Monitor - Connect to testing platform and monitor test results
@@ -77,21 +87,17 @@ if __name__ == '__main__':
 
                     new_ports = uart.diff_ports(init_ports, final_ports)
 
-                    time.sleep(10)
-
-                    HS_PORT = True
+                    SER_PORT = False
                     for port in new_ports:
-                        fd = uart.establish_connection(port)
-                        if fd is not None:
-                            HS_PORT = uart.serial_handshake(fd)
-                            if HS_PORT:
-                                break
+                        SER_PORT = uart.serial_handshake(port)
+                        if SER_PORT:
+                            break
 
-                    if HS_PORT:
+                    if SER_PORT:
                         print(cons.GREEN_TEXT +
                               "Test Platform launched and successfully connected to Test Framework."
                               + cons.RESET_COLOR)
-                        thread = threading.Thread(target=uart.listener, args=[HS_PORT])
+                        thread = threading.Thread(target=uart.listener, args=[SER_PORT])
                         thread.start()
                         thread.join()
                     else:
