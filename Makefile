@@ -6,14 +6,6 @@ root_dir:=$(realpath .)
 src_dir:=$(root_dir)/src
 framework_dir:=$(root_dir)/framework
 
-# Round-up source and include directories
-
-inc_dirs:=$(addsuffix /inc, $(src_dir))
-c_srcs+=$(wildcard $(src_dir)/*.c)
-c_hdrs+=$(foreach inc_dir, $(inc_dirs), $(wildcard $(inc_dir)/*.h))
-python_srcs+=$(wildcard $(framework_dir)/*.py)
-yaml_srcs+=$(wildcard $(framework_dir)/*.yaml)
-
 # Setup toolchain macros and flags
 
 cc:=$(CROSS_COMPILE)gcc
@@ -39,8 +31,19 @@ endif
 # 	clang-arch:=riscv64
 # endif
 
+inc_dirs:=$(addsuffix /inc, $(src_dir))
+c_srcs+=$(wildcard $(src_dir)/*.c)
+c_hdrs+=$(foreach inc_dir, $(inc_dirs), $(wildcard $(inc_dir)/*.h))
 $(call ci, cppcheck, $(c_srcs) $(c_hdrs))
 $(call ci, format, $(c_srcs) $(c_hdrs))
 $(call ci, tidy, $(c_srcs) $(c_hdrs))
+
+python_srcs+=$(wildcard $(framework_dir)/*.py)
+yaml_srcs+=$(wildcard $(framework_dir)/*.yaml)
 $(call ci, pylint, $(python_srcs))
 $(call ci, yamllint, $(yaml_srcs))
+
+other_srcs+=$(wildcard $(src_dir)/*.mk)
+other_srcs+=$(wildcard $(src_dir)/*.ld)
+all_files:=$(c_srcs) $(c_hdrs) $(python_srcs) $(yaml_srcs)  $(other_srcs)
+$(call ci, license, "Apache-2.0", $(all_files))
