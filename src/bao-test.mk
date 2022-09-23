@@ -1,3 +1,6 @@
+#  Copyright (c) Bao Project and Contributors. All rights reserved  
+#  SPDX-License-Identifier: Apache-2.0
+
 ifndef TESTF_TESTS_DIR
 TESTF_TESTS_DIR:=$(SRC_DIR)/tests
 endif

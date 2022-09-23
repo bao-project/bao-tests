@@ -1,9 +1,9 @@
 """
-    Copyright (c) 2021-2023, Bao Project (www.bao-project.com). All rights reserved.
+Copyright (c) Bao Project and Contributors. All rights reserved
 
-    SPDX-License-Identifier: Apache-2.0
+SPDX-License-Identifier: Apache-2.0
 
-    Yaml utils modules to parse config files
+Yaml utils modules to parse config files
 """
 import os
 import re

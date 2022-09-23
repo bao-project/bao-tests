@@ -1,9 +1,9 @@
 """
-    Copyright (c) 2021-2023, Bao Project (www.bao-project.com). All rights reserved.
+Copyright (c) Bao Project and Contributors. All rights reserved
 
-    SPDX-License-Identifier: Apache-2.0
+SPDX-License-Identifier: Apache-2.0
 
-    Module to run tests, which comprises the test setup generation and run
+Module to run tests, which comprises the test setup generation and run
 """
 import os
 import threading
