@@ -1,3 +1,6 @@
+# Copyright (c) Bao Project and Contributors. All rights reserved
+#
+# SPDX-License-Identifier: Apache-2.0
 ---
 bao_cfg:
   cross_compile: ~
