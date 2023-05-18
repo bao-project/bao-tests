@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-#ifndef BAO_TEST_H
-#define BAO_TEST_H
+#ifndef TESTF_H
+#define TESTF_H
 
 #ifndef TESTF_LOG_LEVEL
 #define TESTF_LOG_LEVEL 2
@@ -89,31 +89,24 @@ struct bao_test {
             testframework_fails);                                           \
     } while (0)
 
-#define BAO_TEST(suite, test)                                         \
-    static void func_bao_test_##suite##_##test(unsigned char*);       \
-    static void func_bao_test_TBD_##suite##_##test(void)              \
-    {                                                                 \
-        extern unsigned int testframework_tests;                      \
-        extern unsigned int testframework_fails;                      \
-        unsigned char failures = 0;                                   \
-        if (TESTF_LOG_LEVEL > 1) {                                    \
-            BAO_INFO_TAG();                                           \
-            printf("Running " #suite "\t" #test "\n");                \
-        }                                                             \
-        testframework_tests++;                                        \
-        func_bao_test_##suite##_##test(&failures);                    \
-        if (failures)                                                 \
-            testframework_fails++;                                    \
-    }                                                                 \
-    struct bao_test struct_bao_test_##suite##_##test __attribute__((  \
-        section(".testframework." #suite))) = { .suite_name = #suite, \
-        .test_name = #test,                                           \
-        .func_ptr = func_bao_test_TBD_##suite##_##test };             \
-    static void func_bao_test_##suite##_##test(unsigned char* failures)
+#define BAO_TEST(suite, test)                          \
+    void bao_test_##suite##_##test(unsigned char*);    \
+    void entry_test_##suite##_##test(void)             \
+    {                                                  \
+        extern unsigned int testframework_tests;       \
+        extern unsigned int testframework_fails;       \
+        unsigned char failures = 0;                    \
+        if (TESTF_LOG_LEVEL > 1) {                     \
+            BAO_INFO_TAG();                            \
+            printf("Running " #suite "\t" #test "\n"); \
+        }                                              \
+        testframework_tests++;                         \
+        bao_test_##suite##_##test(&failures);          \
+        if (failures)                                  \
+            testframework_fails++;                     \
+    }                                                  \
+    void bao_test_##suite##_##test(unsigned char* failures)
 
-static inline void run_all();
-static inline int run_specific_test(char* suite, char* test);
-static inline int run_suite(char* suite);
-void bao_test_entry(void);
+void testf_entry(void);
 
-#endif // BAO_TEST_H
+#endif // TESTF_H

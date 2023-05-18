@@ -2,19 +2,24 @@
 #  SPDX-License-Identifier: Apache-2.0
 
 ifndef TESTF_TESTS_DIR
-TESTF_TESTS_DIR:=$(SRC_DIR)/tests
+$(error User must define the variable(s) TESTF_TESTS_DIR with the path to the \
+directory containing the test sources)
+#TODO: add a default value?
 endif
 
 ifndef TESTF_REPO_DIR
-TESTF_REPO_DIR:=$(SRC_DIR)/../../bao-tests
+$(error User must define the variable(s) TESTF_REPO_DIR with the path to the \
+directory containing the test framework repository)
+#TODO: add a default value?
 endif
 
-BAO_TEST_DIR:=$(TESTF_REPO_DIR)/src
-BAO_TEST_INC_DIR:=$(BAO_TEST_DIR)/inc
-
 ifdef BAO_TEST
-BAO_TEST_SRCS += $(BAO_TEST_DIR)/bao_test.c 
-BAO_TEST_SRCS += $(wildcard $(TESTF_TESTS_DIR)/*.c)
+
+TESTF_SRC_DIR:=$(TESTF_REPO_DIR)/src
+TESTF_INC_DIR:=$(TESTF_SRC_DIR)/inc
+
+TESTF_SRCS += $(TESTF_SRC_DIR)/testf_entry.c 
+TESTF_SRCS += $(wildcard $(TESTF_TESTS_DIR)/*.c)
 
 ifndef SUITES
 ifndef TESTS
@@ -23,27 +28,18 @@ endif
 endif
 
 ifdef SUITES
-BAO_TEST_FLAGS+=-DSUITES='"$(SUITES)"'
+TESTF_FLAGS+=$(addprefix -D, $(SUITES))
 endif
 
 ifdef TESTS
-BAO_TEST_FLAGS+=-DTESTS='"$(TESTS)"'
+TESTF_FLAGS+=$(addprefix -D, $(TESTS))
 endif 
 
 ifdef TESTF_LOG_LEVEL
-BAO_TEST_FLAGS+=-DTESTF_LOG_LEVEL=$(TESTF_LOG_LEVEL)
+TESTF_FLAGS+=-DTESTF_LOG_LEVEL=$(TESTF_LOG_LEVEL)
 endif
 
 else
-BAO_TEST_SRCS := $(BAO_TEST_DIR)/bao_weak.c
+TESTF_SRCS += $(TESTF_SRC_DIR)/testf_weak.c 
+
 endif
-
-
-
-#test:
-#	call our framework to properly make the binary
-#	use case 	> make test SUITES="abcd xpto"
-#	instead of 	> make BAO_TEST=1 SUITES="abcd xpto"
-
-#run-test:
-#	ideally used to run/flash the binary

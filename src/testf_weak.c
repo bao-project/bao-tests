@@ -4,9 +4,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-#include "inc/bao_test.h"
+#include "testf.h"
 
-void bao_test_entry(void)
-{
-    printf("\nWEAK! - To be removed\n");
-}
+void testf_entry(void) { }
