@@ -29,54 +29,54 @@ extern unsigned int testframework_start, testframework_end;
 #define YELLOW()      printf("\033[1;33m")
 #define COLOR_RESET() printf("\033[0m")
 
-#define INFO_TAG() \
+#define INFO_TAG()     \
     YELLOW();          \
     printf("[INFO] "); \
     COLOR_RESET();
 
-#define FAIL_TAG()    \
+#define FAIL_TAG()        \
     RED();                \
     printf("[FAILURE] "); \
     COLOR_RESET();
 
-#define SUCC_TAG()    \
+#define SUCC_TAG()        \
     GREEN();              \
     printf("[SUCCESS] "); \
     COLOR_RESET();
 
 #if (TESTF_LOG_LEVEL > 0)
-#define LOG_FAILURE()                                             \
+#define LOG_FAILURE()                                                 \
     do {                                                              \
-        FAIL_TAG();                                               \
+        FAIL_TAG();                                                   \
         printf("\n    File: %s\n    Line: %u\n", __FILE__, __LINE__); \
     } while (0)
 #else
 #define LOG_FAILURE()
 #endif
 
-#define LOG_NOT_SUCCESS()                                                \
+#define LOG_NOT_SUCCESS()                                                    \
     do {                                                                     \
-        FAIL_TAG();                                                      \
+        FAIL_TAG();                                                          \
         printf("Total:%u Passed:%u Failed:%u\n", testframework_tests,        \
             testframework_tests - testframework_fails, testframework_fails); \
     } while (0)
 
-#define LOG_SUCCESS()                                                    \
+#define LOG_SUCCESS()                                                        \
     do {                                                                     \
-        SUCC_TAG();                                                      \
+        SUCC_TAG();                                                          \
         printf("Total:%u Passed:%u Failed:%u\n", testframework_tests,        \
             testframework_tests - testframework_fails, testframework_fails); \
     } while (0)
 
-#define LOG_TESTS()                                                     \
+#define LOG_TESTS()                                                         \
     do {                                                                    \
         if (TESTF_LOG_LEVEL > 1) {                                          \
-            INFO_TAG();                                                 \
+            INFO_TAG();                                                     \
             printf("Final Report\n");                                       \
             if (testframework_fails)                                        \
-                LOG_NOT_SUCCESS();                                      \
+                LOG_NOT_SUCCESS();                                          \
             else                                                            \
-                LOG_SUCCESS();                                          \
+                LOG_SUCCESS();                                              \
         }                                                                   \
         printf("[TESTF-C] TOTAL#%u SUCCESS#%u FAIL#%u\n\n",                 \
             testframework_tests, testframework_tests - testframework_fails, \
@@ -84,18 +84,18 @@ extern unsigned int testframework_start, testframework_end;
     } while (0)
 
 #define BAO_TEST(suite, test)                          \
-    void test_##suite##_##test(unsigned char*);    \
+    void test_##suite##_##test(unsigned char*);        \
     void entry_test_##suite##_##test(void)             \
     {                                                  \
         extern unsigned int testframework_tests;       \
         extern unsigned int testframework_fails;       \
         unsigned char failures = 0;                    \
         if (TESTF_LOG_LEVEL > 1) {                     \
-            INFO_TAG();                            \
+            INFO_TAG();                                \
             printf("Running " #suite "\t" #test "\n"); \
         }                                              \
         testframework_tests++;                         \
-        test_##suite##_##test(&failures);          \
+        test_##suite##_##test(&failures);              \
         if (failures)                                  \
             testframework_fails++;                     \
     }                                                  \
