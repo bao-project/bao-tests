@@ -1,1 +1,3 @@
 .clang-format
+bao_test.c
+testf_entry.c
