@@ -77,31 +77,4 @@ if __name__ == '__main__':
                                             log_lvl=PLATFORM_CFG.log_level,
                                             csrcs=test_config.csrcs)
 
-                    # Logging Monitor - Connect to testing platform and monitor test results
-                    print(cons.BLUE_TEXT + "Connecting to Test Platform..." + cons.RESET_COLOR)
-
-                    init_ports = uart.scan_pts_ports()
-                    test_runner.run()
-                    time.sleep(0.5)
-                    final_ports = uart.scan_pts_ports()
-
-                    new_ports = uart.diff_ports(init_ports, final_ports)
-
-                    SER_PORT = False
-                    for port in new_ports:
-                        SER_PORT = uart.serial_handshake(port)
-                        if SER_PORT:
-                            break
-
-                    if SER_PORT:
-                        print(cons.GREEN_TEXT +
-                              "Test Platform launched and successfully connected to Test Framework."
-                              + cons.RESET_COLOR)
-                        thread = threading.Thread(target=uart.listener, args=[SER_PORT])
-                        thread.start()
-                        thread.join()
-                    else:
-                        print(cons.RED_TEXT +
-                              "Unable to connect to Testing Platform." +
-                              cons.RESET_COLOR)
 
