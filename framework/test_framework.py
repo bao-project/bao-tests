@@ -105,21 +105,3 @@ if __name__ == '__main__':
                               "Unable to connect to Testing Platform." +
                               cons.RESET_COLOR)
 
-                    # Clear all subprocesses
-                    for pid in test_runner.qemu_pid_list:
-                        try:
-                            os.kill(pid, signal.SIGTERM)
-                        except OSError:
-                            continue
-
-                    if len(test_runner.qemu_pid_list) > 0:
-                        RUN_PID = subprocess.check_output("pidof make run", shell=True)
-                        RUN_PID = int(RUN_PID.decode())
-                        try:
-                            os.kill(RUN_PID, signal.SIGTERM)
-                        except OSError:
-                            continue
-
-                    print("Test " + test_setup + " finished...")
-                    print(cons.TEST_RESULTS)
-                    cons.test_results = ''
