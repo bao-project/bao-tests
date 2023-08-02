@@ -19,6 +19,7 @@ TESTF_SRC_DIR:=$(TESTF_REPO_DIR)/src
 TESTF_INC_DIR:=$(TESTF_SRC_DIR)/inc
 
 TESTF_SRCS += $(TESTF_SRC_DIR)/testf_entry.c 
+TESTF_SRCS += $(TESTF_SRC_DIR)/testf_conn.c 
 TESTF_SRCS += $(wildcard $(TESTF_TESTS_DIR)/*.c)
 
 ifndef SUITES
