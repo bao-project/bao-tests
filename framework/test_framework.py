@@ -64,17 +64,4 @@ if __name__ == '__main__':
                     test_config.set_mut_tests(mut)
                     test_config.generate_makes()
 
-                    # Run - Launch QEMU and run tests
-                    print(cons.BLUE_TEXT + "Creating runner..." + cons.RESET_COLOR)
-
-                    test_runner = Runner(platform=platform,
-                                         arch=architecture,
-                                         cross_compile=cross_compile,
-                                         make_cmd_list=MAKE_LIST)
-
-                    print(cons.BLUE_TEXT + "Building setup..." + cons.RESET_COLOR)
-                    test_runner.build_setup(tests_list=test_config.make_cmd,
-                                            log_lvl=PLATFORM_CFG.log_level,
-                                            csrcs=test_config.csrcs)
-
 
