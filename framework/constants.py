@@ -1,8 +1,7 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) Bao Project and Contributors. All rights reserved
+
 """
-Copyright (c) Bao Project and Contributors. All rights reserved
-
-SPDX-License-Identifier: Apache-2.0
-
 Constants to be configured
 """
 # Text coloring
