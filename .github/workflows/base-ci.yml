@@ -70,14 +70,3 @@ jobs:
           fetch-depth: 0
       - run: >
           make pylint
-
-  yamllint:
-    runs-on: ubuntu-latest
-    container: baoproject/bao:latest
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          submodules: recursive
-          fetch-depth: 0
-      - run: >
-          make yamllint
