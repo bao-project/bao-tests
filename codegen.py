@@ -8,11 +8,13 @@ import os
 
 """
 This script is used to generate Bao Project tests code.
-It searches for C source files with 'BAO_TEST' markers and creates corresponding test functions.
+It searches for C source files with 'BAO_TEST' markers and creates
+corresponding test functions.
 """
 
 def parse_args():
-    parser = argparse.ArgumentParser(description='Script to parse tests sources and generate tests code')
+    parser = argparse.ArgumentParser(description='Script to parse tests \
+                                     sourcesand generate tests code')
 
     parser.add_argument("-dir", "--base_dir",
                         help="Base directory of the tests directory",
@@ -37,7 +39,8 @@ def get_srcs_list(base_dir):
 
 def code_header():
     code = "/*" + "\n"
-    code += "* Copyright (c) Bao Project and Contributors. All rights reserved" + "\n"
+    code += "* Copyright (c) Bao Project and Contributors. "
+    code += "All rights reserved" + "\n"
     code += "*" + "\n"
     code += "* SPDX-License-Identifier: Apache-2.0" + "\n"
     code += "*/" + "\n"
