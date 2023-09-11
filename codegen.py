@@ -1,9 +1,8 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright (c) Bao Project and Contributors. All rights reserved
-
-import numpy as np
+import sys
 import argparse
-import glob
+import shutil
 import os
 
 """
@@ -11,6 +10,7 @@ This script is used to generate Bao Project tests code.
 It searches for C source files with 'BAO_TEST' markers and creates
 corresponding test functions.
 """
+
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Script to parse tests \
@@ -36,31 +36,7 @@ def get_srcs_list(base_dir):
                 c_srcs.append(os.path.join(root, file))
     return c_srcs
 
-
-def code_header():
-    code = "/*" + "\n"
-    code += "* Copyright (c) Bao Project and Contributors. "
-    code += "All rights reserved" + "\n"
-    code += "*" + "\n"
-    code += "* SPDX-License-Identifier: Apache-2.0" + "\n"
-    code += "*/" + "\n"
-    return code
-
-
-def code_includes():
-    code = "#include \"testf.h\"" + "\n"
-    code += "#include <stdio.h>" + "\n"
-    code += "#include <string.h>" + "\n"
-    return code
-
-
-def code_variables():
-    code = "unsigned int testframework_tests;" + "\n"
-    code += "unsigned int testframework_fails;" + "\n"
-    return code
-
-
-def generate_defines(base_dir):
+def generate_code(base_dir):
     c_files = get_srcs_list(base_dir)
     tests_list = {}
     code = ""
@@ -90,41 +66,38 @@ def generate_defines(base_dir):
             code += "\tentry_test_" + suite + "_" + test + "();" + "\n"
             code += "\t#endif" + "\n" + "\n"
 
-    return code
-
-
-def code_functions(base_dir):
-    code = "void testf_entry(void)" + "\n"
-    code += "{" + "\n"
-
-    code += generate_defines(base_dir)
-
-    code += "\tif (testframework_tests > 0) {" + "\n"
-    code += "\t\tBAO_LOG_TESTS();" + "\n"
-    code += "\t} else {" + "\n"
-    code += "\t\tBAO_INFO_TAG();" + "\n"
-    code += "\t\tprintf(\"No tests were executed!\\n\");" + "\n"
-    code += "\t}" + "\n"
-    code += "\treturn;" + "\n"
-    code += "}" + "\n"
-    return code
-
-
-def generate_code(base_dir):
-    code = ""
-    code += code_header() + "\n"
-    code += code_includes() + "\n"
-    code += code_variables() + "\n"
-    code += code_functions(base_dir) + "\n"
-    return code
+    return code[:-2]
 
 
 if __name__ == '__main__':
     tool_args = parse_args()
     print("base_dir: ", tool_args.base_dir)
-    code = generate_code(tool_args.base_dir)
+    tests_code = generate_code(tool_args.base_dir)
 
+    # Copy template to output directory
+    template_file = "./template.c"
+    if not os.path.isfile(template_file):
+        print("Template file missing!")
+        sys.exit()
+    shutil.copy(template_file, tool_args.out_code)
+
+    # Read template
+    with open(tool_args.out_code, "r") as f:
+        code = f.readlines()
+
+    # Get codegen.py writable sections
+    code_sec_begin, code_sec_end = -1, -1
+    for index, line in enumerate(code):
+        if "// codegen.py section begin" in line:
+            code_sec_begin = index
+
+        if "// codegen.py section end" in line:
+            code_sec_end = index
+
+    # Write generated code to output file
+    out_code = ''.join(code[0:code_sec_begin+1])
+    out_code += tests_code
+    out_code += ''.join(code[code_sec_end:])
     with open(tool_args.out_code, "w") as f:
-        f.write(code)
-
-    print("Successfully generated bao tests code")
+        f.writelines(out_code)
+        print("Successfully generated bao tests code")
