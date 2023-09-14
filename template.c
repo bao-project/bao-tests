@@ -19,9 +19,9 @@ void testf_entry(void)
     // codegen.py section end
 
     if (testframework_tests > 0) {
-		BAO_LOG_TESTS();
+		LOG_TESTS();
 	} else {
-		BAO_INFO_TAG();
+		INFO_TAG();
 		printf("No tests were executed!\n");
 	}
 	return;
