@@ -22,7 +22,7 @@
                 (*failures)++;                                  \
                 intra_fails++;                                  \
                 if (intra_fails == 1)                           \
-                    BAO_LOG_FAILURE();                          \
+                    LOG_FAILURE();                              \
                 if (TESTF_LOG_LEVEL > 1) {                      \
                     printf("    Index: %d\n", i);               \
                 }                                               \
@@ -40,7 +40,7 @@
         }                                                       \
         if (intra_fails == 0) {                                 \
             (*failures)++;                                      \
-            BAO_LOG_FAILURE();                                  \
+            LOG_FAILURE();                                      \
         }                                                       \
     } while (0)
 
@@ -48,7 +48,7 @@
     do {                          \
         if (!(x op y)) {          \
             (*failures)++;        \
-            BAO_LOG_FAILURE();    \
+            LOG_FAILURE();        \
         }                         \
     } while (0)
 
@@ -56,7 +56,7 @@
 
 #define TESTF_FAIL(message) \
     (*failures)++;          \
-    BAO_LOG_FAILURE();      \
+    LOG_FAILURE();          \
     printf("    Message: %s\n", message);
 
 #endif // TESTF_ASSERT_H
