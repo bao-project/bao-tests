@@ -9,6 +9,8 @@ import constants as cons
 from pydevicetree import Devicetree
 import os
 import sys
+import psutil
+import subprocess
 
 PARSER = argparse.ArgumentParser(description="Bao Testing Framework")
 PARSER.add_argument("--dts_path", help="Path to .dts configuration file")
@@ -40,6 +42,48 @@ def parse_dts_file(file_path):
         tree.children[0].children[0].children[0].properties[2].values[0]
     test_config['tests_configs']['log_level'] = \
         tree.children[0].children[0].children[0].properties[2].values[0]
+
+def run_command_in_terminal(command):
+    """
+    Run a command in a new Terminal window.
+
+    Args:
+        command (str): The command to execute.
+    """
+    terminal_process = subprocess.Popen(
+        ['/bin/bash', '-c', command],
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE
+    )
+    return terminal_process
+
+def terminate_children_processes(parent_process):
+    """
+    Terminate all child processes of the given parent process.
+
+    Args:
+        parent_process: The parent process whose children will be terminated.
+    """
+    parent = psutil.Process(parent_process.pid)
+    children = parent.children(recursive=True)
+    for child in children:
+        child.terminate()
+        child.wait()
+
+def deploy_test(platform):
+    """
+    Deploy a test on a specific platform.
+
+    Args:
+        platform (str): The platform to deploy the test on.
+    """
+    if platform in ["qemu-aarch64-virt", "qemu-riscv64-virt"]:
+        arch = platform.split("-")[1]
+        run_cmd = "../platform/qemu/run.sh " + arch
+        process = run_command_in_terminal(run_cmd)
+        # Connection to platform will run here
+        # which will stall the platform untill the results
+        # are sent from the platform to the framework
+        terminate_children_processes(process)
 
 if __name__ == '__main__':
 
@@ -106,3 +150,6 @@ if __name__ == '__main__':
                "nix build failed..." +
                cons.RESET_COLOR)
         sys.exit(-1)
+
+    print(cons.BLUE_TEXT + "Launching QEMU..." + cons.RESET_COLOR)
+    deploy_test(test_config['platform'])
