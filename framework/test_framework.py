@@ -77,3 +77,32 @@ if __name__ == '__main__':
     RUN_CMD += "-o ./src/testf_weak.c"
     os.system(RUN_CMD)
     os.chdir(CURR_DIR)
+
+    print(cons.BLUE_TEXT + "Running nix build..." + cons.RESET_COLOR)
+    BUILD_CMD = 'nix-build ../../' + test_config['nix_file']
+    list_suites = test_config['suites'].split()
+    list_tests = test_config['tests'].split()
+    BUILD_CMD += " --argstr platform " + test_config['platform']
+    if len(list_suites):
+        BUILD_CMD += " --argstr list_suites \""
+        for suit in list_suites:
+            BUILD_CMD += suit + " "
+        BUILD_CMD = BUILD_CMD[:-1] + "\""
+    if len(list_tests):
+        BUILD_CMD += " --argstr list_tests \""
+        for suit in list_tests:
+            BUILD_CMD += suit + " "
+        BUILD_CMD = BUILD_CMD[:-1] + "\""
+
+    print(BUILD_CMD)
+    res = os.system(BUILD_CMD)
+    if res==0:
+        print(cons.GREEN_TEXT +
+            "nix build successfully completed..." +
+            cons.RESET_COLOR)
+
+    else:
+        print(cons.RED_TEXT +
+               "nix build failed..." +
+               cons.RESET_COLOR)
+        sys.exit(-1)
