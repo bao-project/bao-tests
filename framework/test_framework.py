@@ -6,7 +6,9 @@ Test framework main file
 """
 import argparse
 import constants as cons
-from pydevicetree import Devicetree 
+from pydevicetree import Devicetree
+import os
+import sys
 
 PARSER = argparse.ArgumentParser(description="Bao Testing Framework")
 PARSER.add_argument("--dts_path", help="Path to .dts configuration file")
@@ -64,3 +66,14 @@ if __name__ == '__main__':
 
     parse_dts_file(dts_path)
     print(cons.GREEN_TEXT + "config.dts successfully read!" + cons.RESET_COLOR)
+
+    print(cons.BLUE_TEXT +
+          "Creating tests source file..." +
+          cons.RESET_COLOR)
+    CURR_DIR = os.getcwd()
+    print("CURR_DIR: " + CURR_DIR)
+    os.chdir("../")
+    RUN_CMD = "python3 codegen.py -dir ../src/ "
+    RUN_CMD += "-o ./src/testf_weak.c"
+    os.system(RUN_CMD)
+    os.chdir(CURR_DIR)
