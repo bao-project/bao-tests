@@ -5,12 +5,12 @@
 Test framework main file
 """
 import argparse
-import constants as cons
-from pydevicetree import Devicetree
 import os
 import sys
-import psutil
 import subprocess
+import psutil
+import constants as cons
+from pydevicetree import Devicetree
 
 PARSER = argparse.ArgumentParser(description="Bao Testing Framework")
 PARSER.add_argument("--dts_path", help="Path to .dts configuration file")
@@ -50,10 +50,13 @@ def run_command_in_terminal(command):
     Args:
         command (str): The command to execute.
     """
+    # pylint: disable=R1732
     terminal_process = subprocess.Popen(
         ['/bin/bash', '-c', command],
         stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE
     )
+    # pylint: enable=R1732
+
     return terminal_process
 
 def terminate_children_processes(parent_process):
