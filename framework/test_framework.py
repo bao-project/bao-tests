@@ -12,9 +12,6 @@ import psutil
 import constants as cons
 from pydevicetree import Devicetree
 
-PARSER = argparse.ArgumentParser(description="Bao Testing Framework")
-PARSER.add_argument("--dts_path", help="Path to .dts configuration file")
-
 test_config = {
     'nix_file': '',
     'suites': '',
@@ -23,6 +20,23 @@ test_config = {
         'log_level': ''
     }
 }
+
+def parse_args():
+    """
+    Parse python script arguments.
+    """
+    parser = argparse.ArgumentParser(description="Bao Testing Framework")
+
+    parser.add_argument("-dts_path", "--dts_path",
+                        help="Path to .dts configuration file",
+                        default=".")
+
+    parser.add_argument("-bao_test_src_path", "--bao_test_src_path",
+                        help="Path to bao-test /src dir",
+                        default="../src")
+
+    input_args = parser.parse_args()
+    return input_args
 
 def parse_dts_file(file_path):
     """
@@ -95,7 +109,7 @@ if __name__ == '__main__':
           "Framework init..." +
           cons.RESET_COLOR)
 
-    args = PARSER.parse_args()
+    args = parse_args()
 
     print(cons.BLUE_TEXT +
           "Reading config.dts..." +
@@ -117,11 +131,12 @@ if __name__ == '__main__':
     print(cons.BLUE_TEXT +
           "Creating tests source file..." +
           cons.RESET_COLOR)
+
     CURR_DIR = os.getcwd()
-    print("CURR_DIR: " + CURR_DIR)
-    os.chdir("../")
-    RUN_CMD = "python3 codegen.py -dir ../src/ "
-    RUN_CMD += "-o ./src/testf_weak.c"
+    bao_tests_src = args.bao_test_src_path
+    os.chdir(bao_tests_src)
+    RUN_CMD = "python3 codegen.py -dir " + bao_tests_src + " "
+    RUN_CMD += "-o " + bao_tests_src + "/testf_weak.c"
     os.system(RUN_CMD)
     os.chdir(CURR_DIR)
 
