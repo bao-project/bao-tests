@@ -29,11 +29,15 @@ def parse_args():
 
     parser.add_argument("-dts_path", "--dts_path",
                         help="Path to .dts configuration file",
-                        default=".")
+                        default="../../configs/config.dts")
 
     parser.add_argument("-bao_test_src_path", "--bao_test_src_path",
                         help="Path to bao-test /src dir",
                         default="../src")
+
+    parser.add_argument("-tests_src_path", "--tests_src_path",
+                        help="Path to bao-test /src dir",
+                        default="../../src")
 
     input_args = parser.parse_args()
     return input_args
@@ -132,13 +136,11 @@ if __name__ == '__main__':
           "Creating tests source file..." +
           cons.RESET_COLOR)
 
-    CURR_DIR = os.getcwd()
-    bao_tests_src = args.bao_test_src_path
-    os.chdir(bao_tests_src)
-    RUN_CMD = "python3 codegen.py -dir " + bao_tests_src + " "
-    RUN_CMD += "-o " + bao_tests_src + "/testf_weak.c"
+    bao_test_src = args.bao_test_src_path
+    tests_src = args.tests_src_path
+    RUN_CMD = "python3 codegen.py -dir " + tests_src + " "
+    RUN_CMD += "-o " + bao_test_src + "/testf_entry.c"
     os.system(RUN_CMD)
-    os.chdir(CURR_DIR)
 
     print(cons.BLUE_TEXT + "Running nix build..." + cons.RESET_COLOR)
     BUILD_CMD = 'nix-build ../../' + test_config['nix_file']

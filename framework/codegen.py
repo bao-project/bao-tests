@@ -75,7 +75,7 @@ if __name__ == '__main__':
     tests_code = generate_code(tool_args.base_dir)
 
     # Copy template to output directory
-    template_file = "./template.c"
+    template_file = "../src/template.c"
     if not os.path.isfile(template_file):
         print("Template file missing!")
         sys.exit()
