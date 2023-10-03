@@ -1,137 +1,64 @@
-# Table of contents
-- [Test definition](#test-definition)
-  * [Unit test](#unit-test)
-  * [Test proprieties](#test-proprieties)
-    + [Critical test](#critical-test)
-    + [Long run test](#long-run-test)
-    + [Test template](#test-template)
-  * [Test suit](#test-suit)
-  * [Test setup](#test-setup)
-  * [Setup test directory](#setup-test-directory)
+## 0. Setup test directory
 
-# Test definition
-## Unit test
-A unit test can be defined to evaluate a procedure (block of code).
-
-## Test proprieties
-For each test, the following parameters can be set:
-
-### Critical test
-- True - The test process should be stopped if the test fails
-- False - The test process can continue even if the test fails
-
-### Long run test
-- True - The test duration is considered long (long-time run)
-- False - The test is considered fast (short-time run
-
-### Test template
-A test definition must follow the outlined nomenclature.
-
-```C
-BAO_TEST(#suite_name, #test_name, #criticality, #long_run)
-{
- // test code here
-}
-```
-
-## Test suit
-The term "test suite" refers to a group of tests. Grouping the tests enables a more organized selection of tests, making running numerous tests easier.
-
-<table class="tg">
-<thead>
-  <tr>
-    <th class="tg-c3ow">Suit name</th>
-    <th class="tg-c3ow">Test name</th>
-    <th class="tg-c3ow">Critical test</th>
-    <th class="tg-c3ow">Long test</th>
-  </tr>
-</thead>
-<tbody>
-  <tr>
-    <td class="tg-c3ow" rowspan="3">Suit_1<br></td>
-    <td class="tg-c3ow">Test_1</td>
-    <td class="tg-c3ow">T/F</td>
-    <td class="tg-c3ow">T/F</td>
-  </tr>
-  <tr>
-    <td class="tg-c3ow">Test_2</td>
-    <td class="tg-c3ow">T/F</td>
-    <td class="tg-c3ow">T/F</td>
-  </tr>
-  <tr>
-    <td class="tg-c3ow">Test_3</td>
-    <td class="tg-c3ow">T/F</td>
-    <td class="tg-c3ow">T/F</td>
-  </tr>
-  <tr>
-    <td class="tg-c3ow" rowspan="3">Suit_2<br></td>
-    <td class="tg-c3ow">Test_1</td>
-    <td class="tg-c3ow">T/F</td>
-    <td class="tg-c3ow">T/F</td>
-  </tr>
-  <tr>
-    <td class="tg-c3ow">Test_2</td>
-    <td class="tg-c3ow">T/F</td>
-    <td class="tg-c3ow">T/F</td>
-  </tr>
-  <tr>
-    <td class="tg-c3ow">Test_3</td>
-    <td class="tg-c3ow">T/F</td>
-    <td class="tg-c3ow">T/F</td>
-  </tr>
-</tbody>
-</table>
-
-## Test setup
-In order to use Bao Test Framework you have go throught the following steps:
-
-1. Add the following lines to your linkerscript
-	```c
-	.testframework : {
-	    __testframework_start = . ;
-	    *(.testframework.PRIO* .testframework.prio*)
-	    *(.testframework.*)
-	    __testframework_end = . ;        
-	}
-	```
-
-2. Add the following lines to your makefile (use the variable TEST_DIR to indicate the directory where all the file containing tests are. The variable REPO_DIR should point to the base directory of this repository. Additionally, the variables names C_SRC, INC_DIRS, and CFLAGS may have to be modified according to your makefile.)
-
-	```c
-    TESTS_DIR:=$(SRC_DIR)/tests
-    REPO_DIR:=$(SRC_DIR)/../bao-tests
-    include bao-tests/src/bao-test.mk
-    C_SRC += $(BAO_TEST_SRCS)
-    INC_DIRS += $(BAO_TEST_INC_DIR)
-    CFLAGS += $(BAO_TEST_FLAGS)
-	```
-(Note: If you are using the C library without the Python tool, make sure you add also delete the test build directory in your clean rule)
-
-3. Add to your source the entry point (bao_test_entry()) to our framework, where you feel it is correct.
-4. Create a .c file (or multiple) in the directory specified early, include bao_test.h and create tests according to the [test definition example](#Test template).
-5. Build your system normally adding the following variable to your make command:
-
-	```c
-	BAO_TEST=1 -> mandatory to use the framework, otherwise no test will be executed
-    SUITES="suite1 suite2" -> to specify which suites need to be executed
-    TESTS="test1 test2" -> to specify which tests are to bexecuted
-	```
-
-## Setup test directory
-The test platform directory provides a template of a VMM, a VM, and a Guest. These templates are available in the BAO_Test/ directory. A test relating to a MUT should be placed in that module's directory. Tests must be grouped into suits (directory name equals to the suit name) inside the module directory.
+The provided directory tree below illustrates an example of how to use the
+framework:
 
 ```c
-BAO_Test/
-├─ VMM_template
-├─ VM_template
-├─ VM_Test/
-│  ├─ Suit_1/
-│  │  ├─ Test_1
-│  │  ├─ Test_n
-│  ├─ Suit_n/
-│  │  ├─ Test_1
-│  │  ├─ Test_n
-├─ VMM_Test/
-├─ Guest_Test/	
+ MUT
+ ├── ci
+ ├── src
+ ├── tests
+ │   ├── configs
+ │   │   ├── test_cfg1.dts
+ │   │   ├── test_cfg2.dts
+ │   ├── src
+ │   │   ├── test_src1.c
+ │   │   ├── test_src2.c
+ │   ├── bao-tests            (git repository)
+ │   ├── bao-nix              (git repository)
 ```
 
+## 1. Get Bao-nix repository
+```sh
+git clone https://github.com/bao-project/bao-nix.git
+```
+
+## 2. Get Bao-tests repository
+```sh
+git clone https://github.com/bao-project/bao-tests.git
+```
+
+## 3. How to configure
+Configuration of the test framework is performed through a .dts file. This file allows you to define the test recipe, select the target platform, and specify
+the tests to be run in a given setup. The configuration file follows this
+template:
+```dts
+/dts-v1/;
+/ {
+    platform = "test-target-platform";
+
+    test_config {
+        recipe_test {
+            nix_file = "test-recipe.nix";
+            suites = "list-of-suites";
+            tests = "list-of-tests";
+            log_level = "verbose-level";
+        };
+    };
+};
+```
+## 4. How to use
+
+After setting up the directory, run the following commands:
+```sh
+cd /path-to-MUT-dir/tests/bao-tests/framework/
+python3 test_framework.py
+```
+
+Alternatively, you can launch the framework with the following arguments:
+```sh
+python3 test_framework.py \
+  -dts_path /path/to/config.dts \                # config.dts file
+  -bao_test_src_path /path/to/bao-tests/src \    # bao-tests repo (/src)
+  -tests_src_path /path/to/tests/src             # tests to be executed
+```
