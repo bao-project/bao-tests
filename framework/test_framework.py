@@ -11,6 +11,7 @@ import subprocess
 import psutil
 import constants as cons
 from pydevicetree import Devicetree
+import connection
 
 test_config = {
     'nix_file': '',
@@ -100,10 +101,19 @@ def deploy_test(platform):
     if platform in ["qemu-aarch64-virt", "qemu-riscv64-virt"]:
         arch = platform.split("-")[1]
         run_cmd = "../platform/qemu/run.sh " + arch
+
+        ports_init = connection.scan_pts_ports()
         process = run_command_in_terminal(run_cmd)
-        # Connection to platform will run here
-        # which will stall the platform untill the results
-        # are sent from the platform to the framework
+
+        ports_aux = connection.scan_pts_ports()
+        ports_end = ports_aux
+
+        while ports_end == ports_aux:
+            ports_end = connection.scan_pts_ports()
+
+        diff_ports = connection.diff_ports(ports_init, ports_end)
+        connection.connect_to_platform_port(diff_ports)
+
         terminate_children_processes(process)
 
 if __name__ == '__main__':
