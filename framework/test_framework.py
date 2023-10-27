@@ -100,7 +100,7 @@ def deploy_test(platform):
     """
     if platform in ["qemu-aarch64-virt", "qemu-riscv64-virt"]:
         arch = platform.split("-")[1]
-        run_cmd = "../platform/qemu/run.sh " + arch
+        run_cmd = "./platform/qemu/run.sh " + arch
 
         ports_init = connection.scan_pts_ports()
         process = run_command_in_terminal(run_cmd)
