@@ -14,6 +14,8 @@ from pydevicetree import Devicetree
 import connection
 
 test_config = {
+    'platform': '',
+    'log_echo': '',
     'nix_file': '',
     'suites': '',
     'tests': '',
@@ -53,6 +55,13 @@ def parse_dts_file(file_path):
     tree = Devicetree.parseFile(file_path)
     test_config['platform'] = \
         tree.children[0].properties[0].values[0]
+
+    try:
+        test_config['log_echo'] = \
+            tree.children[0].properties[1].values[0]
+    except (IndexError, AttributeError):
+        test_config['log_echo'] = 0
+
     test_config['nix_file'] = \
         tree.children[0].children[0].children[0].properties[0].values[0]
     test_config['suites'] = \
@@ -112,8 +121,7 @@ def deploy_test(platform):
             ports_end = connection.scan_pts_ports()
 
         diff_ports = connection.diff_ports(ports_init, ports_end)
-        connection.connect_to_platform_port(diff_ports)
-
+        connection.connect_to_platform_port(diff_ports, test_config['log_echo'])
         terminate_children_processes(process)
 
 if __name__ == '__main__':

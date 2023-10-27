@@ -30,7 +30,7 @@ def diff_ports(ports_init, ports_end):
     return diff
 
 
-def connect_to_platform_port(ports_list):
+def connect_to_platform_port(ports_list, log_echo):
     """
     Establishes connections to multiple serial ports concurrently and starts a
     listener thread for each port.
@@ -44,7 +44,7 @@ def connect_to_platform_port(ports_list):
 
     for port in ports_list:
         ser_port = open_connection(port)
-        new_thread = threading.Thread(target=listener, args=[ser_port])
+        new_thread = threading.Thread(target=listener, args=[ser_port, log_echo])
         threads.append(new_thread)
 
     for thread in threads:
@@ -56,7 +56,7 @@ def connect_to_platform_port(ports_list):
     for thread in threads:
         thread.join()
 
-def listener(ser_port):
+def listener(ser_port, log_echo):
     """
     Listener to receive test results
     """
@@ -78,7 +78,7 @@ def listener(ser_port):
                 new_line = new_line.replace(old, new)
             res_log.append(new_line)
 
-            if b"[INFO]" in res:
+            if (b"[INFO]" in res) and (log_echo):
                 print(new_line, end="")
 
             if stop_event.is_set():
@@ -87,7 +87,8 @@ def listener(ser_port):
         for line in res_log:
             #print("line: " + line)
             if "[TESTF-C]" in line:
-                print(line)
+                if log_echo:
+                    print(line)
                 cons.TEST_RESULTS = line
                 thread_finished.set()
 
