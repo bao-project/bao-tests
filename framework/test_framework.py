@@ -100,6 +100,27 @@ def terminate_children_processes(parent_process):
         child.terminate()
         child.wait()
 
+def get_file_path(filename):
+    """
+    Search for a file named 'filename' within 'result' directories.
+    Args:
+    - filename: The name of the file to search for.
+    Returns:
+    - The path to the file if found, otherwise returns None.
+    """
+    result_directories = [
+        d for d in os.listdir() if d.startswith('result') and os.path.isdir(d)
+        ]
+
+    for directory in result_directories:
+        dir_path = os.path.join(os.getcwd(), directory)
+        for root, files in os.walk(dir_path):
+            if filename in files:
+                return os.path.join(root, filename)
+
+    print(f"File '{filename}' not found in any 'result' directory.")
+    sys.exit(-1)
+
 def deploy_test(platform):
     """
     Deploy a test on a specific platform.
@@ -109,8 +130,12 @@ def deploy_test(platform):
     """
     if platform in ["qemu-aarch64-virt", "qemu-riscv64-virt"]:
         arch = platform.split("-")[1]
-        run_cmd = "./platform/qemu/run.sh " + arch
-
+        bao_bin_path = get_file_path("bao.bin")
+        flash_bin_path = get_file_path("flash.bin")
+        run_cmd = "./platform/qemu/run.sh"
+        run_cmd += " " + arch
+        run_cmd += " " + flash_bin_path
+        run_cmd += " " + bao_bin_path
         ports_init = connection.scan_pts_ports()
         process = run_command_in_terminal(run_cmd)
 
