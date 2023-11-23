@@ -68,19 +68,18 @@ extern unsigned int testframework_start, testframework_end;
             testframework_tests - testframework_fails, testframework_fails); \
     } while (0)
 
-#define LOG_TESTS()                                                         \
-    do {                                                                    \
-        if (TESTF_LOG_LEVEL > 1) {                                          \
-            INFO_TAG();                                                     \
-            printf("Final Report\n");                                       \
-            if (testframework_fails)                                        \
-                LOG_NOT_SUCCESS();                                          \
-            else                                                            \
-                LOG_SUCCESS();                                              \
-        }                                                                   \
-        printf("[TESTF-C] TOTAL#%u SUCCESS#%u FAIL#%u\n\n",                 \
-            testframework_tests, testframework_tests - testframework_fails, \
-            testframework_fails);                                           \
+#define LOG_TESTS()                                                              \
+    do {                                                                         \
+        if (TESTF_LOG_LEVEL > 1) {                                               \
+            INFO_TAG();                                                          \
+            printf("Final Report\n");                                            \
+            if (testframework_fails)                                             \
+                LOG_NOT_SUCCESS();                                               \
+            else                                                                 \
+                LOG_SUCCESS();                                                   \
+        }                                                                        \
+        printf("[TESTF-C] TOTAL#%u SUCCESS#%u FAIL#%u\n\n", testframework_tests, \
+            testframework_tests - testframework_fails, testframework_fails);     \
     } while (0)
 
 #define BAO_TEST(suite, test)                          \
