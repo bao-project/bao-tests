@@ -136,16 +136,24 @@ def deploy_test(platform):
         run_cmd += " " + arch
         run_cmd += " " + flash_bin_path
         run_cmd += " " + bao_bin_path
-        ports_init = connection.scan_pts_ports()
+
+        # Get the ports opened before running QEMU
+        initial_pts_ports = connection.scan_pts_ports()
+
+        # Launch QEMU
         process = run_command_in_terminal(run_cmd)
 
-        ports_aux = connection.scan_pts_ports()
-        ports_end = ports_aux
+        # Initially set the end ports as the ports obtained before running QEMU
+        final_pts_ports = initial_pts_ports
 
-        while ports_end == ports_aux:
-            ports_end = connection.scan_pts_ports()
+        # Continuously scan for ports until the ports after running QEMU differ
+        # from the initial ports; this retrieves the pts ports opened by QEMU
+        while final_pts_ports == initial_pts_ports:
+            final_pts_ports = connection.scan_pts_ports()
 
-        diff_ports = connection.diff_ports(ports_init, ports_end)
+        # Find the difference between the initial and final pts ports
+        diff_ports = connection.diff_ports(initial_pts_ports, final_pts_ports)
+
         connection.connect_to_platform_port(diff_ports, test_config['log_echo'])
         terminate_children_processes(process)
 
