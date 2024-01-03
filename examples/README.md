@@ -8,7 +8,7 @@
 | [Local Hypervisor Sources](#local-hypervisor-sources) | Use Bao Test Framework to test local hypervisor        |
 
 
-## Local Baremetal Sources
+## Remote Hypervisor Sources
 ### 0. Setup the working directory
 Start by setting the working directory with the following structure:
 ```c
