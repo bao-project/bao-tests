@@ -48,7 +48,7 @@ git clone https://github.com/bao-project/bao-tests
 ```
 3. Cloning the Bao nix repository:
 ```sh
-git clone https://github.com/bao-project/bao-nix.git
+git clone --branch update/guests-recipes https://github.com/bao-project/bao-nix.git
 ```
 
 ### 1. Manage Tests
