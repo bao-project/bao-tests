@@ -78,9 +78,9 @@ BAO_TEST(HELLO, TEST_B)
 Create a configuration file:
 ```sh
 cd $ROOT_DIR/tests/configs
-touch local_baremetal_suite.dts
+touch config_suite.dts
 ```
-And then define the following setup in the `local_baremetal_suite.dts` file:
+And then define the following setup in the `config_suite.dts` file:
 ```dts
 /dts-v1/;
 / {
@@ -102,10 +102,10 @@ In this configuration file, both tests will run since that we are selecting the 
 specific test, let's create a second config file:
 ```sh
 cd $ROOT_DIR/tests/configs
-touch local_baremetal_test.dts
+touch config_test.dts
 ```
 
-And then define the following setup in the `local_baremetal_test.dts` file:
+And then define the following setup in the `config_test.dts` file:
 ```dts
 /dts-v1/;
 / {
