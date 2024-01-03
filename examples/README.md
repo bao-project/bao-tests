@@ -4,7 +4,7 @@
 
 | Example                                               | Description                                            |
 | ----------------------------------------------------- | ------------------------------------------------------ |
-| [Local Baremetal Sources](#local-baremetal-sources)   | Use Bao Test Framework to test local guest (baremetal) |
+| [Remote Hypervisor Sources](#local-baremetal-sources)   | Use Bao Test Framework to test local guest (baremetal) |
 | [Local Hypervisor Sources](#local-hypervisor-sources) | Use Bao Test Framework to test local hypervisor        |
 
 
@@ -28,8 +28,8 @@ Start by setting the working directory with the following structure:
 For this example, we will consider the Module Under Test (MUT) a baremetal guest. Start by cloning a
 baremetal guest example:
 ```sh
-git clone --branch demo https://github.com/bao-project/bao-baremetal-guest.git
-cd bao-baremetal-guet
+git clone --branch demo https://github.com/bao-project/bao-hypervisor.git
+cd bao-hypervisor
 export ROOT_DIR=$(realpath .)
 ```
 
