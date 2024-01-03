@@ -217,11 +217,45 @@ in
 
 4. Change Guest to Enable Testing
 
-First, we need to define an entry point for the tests. In the
-[main.c](examples/bao-baremetal-guest/src/main.c) file of the baremetal, apply
-the following changes:
-```diff
+:information_source: Please refrain from replicating the subsequent steps in
+this demo. To streamline the process, the baremetal build recipe already
+integrates a patch containing the necessary modifications. To implement this,
+simply copy the [patch](/examples/patches/baremetal.patch) placed at
+`/examples/patches/baremetal.patch` to the `$ROOT_DIR` using the command:
+`cp patches/baremetal.patch $ROOT_DIR/baremetal.patch`.
 
+First, we need to define an entry point for the tests. In the `main.c` file of
+the baremetal, apply the following changes:
+```diff
+void main(void){
+         printf("Bao bare-metal test guest\n");
+         spin_unlock(&print_lock);
+ 
++        testf_entry();
+
+         irq_set_handler(UART_IRQ_ID, uart_rx_handler);
+         irq_set_handler(TIMER_IRQ_ID, timer_handler);
+         irq_set_handler(IPI_IRQ_ID, ipi_handler);
+```
+
+Then, the `Makefile` needs to be updated to include the build of the tests
+sources:
+```diff
+ src_dirs+=$(src_dir) $(core_dir) $(platform_dir)
+ SRC_DIRS+=$(src_dirs)
+ INC_DIRS+=$(addsuffix /inc, $(src_dirs))
+ 
++# Test framework setup
++include $(TESTF_REPO_DIR)/src/bao-test.mk
++SRC_DIRS+=$(TESTF_SRC_DIR) $(TESTF_TESTS_DIR)
++C_SRC+=$(TESTF_SRCS)
++INC_DIRS+=$(TESTF_INC_DIR)
++CFLAGS+=$(TESTF_FLAGS)
++# End of test framework setup
+
+ ifeq ($(wildcard $(platform_dir)),)
+ $(error unsupported platform $(PLATFORM))
+ endif
 ```
 
 ## Local Hypervisor Sources
