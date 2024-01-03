@@ -114,7 +114,7 @@ def get_file_path(filename):
 
     for directory in result_directories:
         dir_path = os.path.join(os.getcwd(), directory)
-        for root, files in os.walk(dir_path):
+        for root, _, files in os.walk(dir_path):
             if filename in files:
                 return os.path.join(root, filename)
 
