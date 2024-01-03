@@ -161,47 +161,50 @@ let
   packages = rec {
 
     # Get Platform details
-    platform_cfg = callPackage ./bao-nix/pkgs/platforms/platforms.nix{
+    plat_cfg  = callPackage ./bao-nix/pkgs/platforms/platforms.nix{
       inherit platform;
     };
-    arch = platform_cfg.platforms-arch.${platform};
+    arch = plat_cfg .platforms-arch.${platform};
 
     # Build toolchain
-    build_toolchain = callPackage ./bao-nix/pkgs/toolchains/aarch64-none-elf-11-3.nix{};
+    aarch64-none-elf = callPackage ./bao-nix/pkgs/toolchains/aarch64-none-elf-11-3.nix{};
 
     # Build Tests Dependencies (will be deprecated)
     demos = callPackage ./bao-nix/pkgs/demos/demos.nix {};
     bao-tests = callPackage ./bao-nix/pkgs/bao-tests/bao-tests.nix {};
     tests = callPackage ./bao-nix/pkgs/tests/tests.nix {};
-    baremetal = callPackage ./bao-nix/pkgs/guest/baremetal-bao-tf.nix 
-                {
-                  toolchain = build_toolchain; 
-                  inherit platform_cfg;
+    baremetal = callPackage ./bao-nix/pkgs/guest/baremetal-remote-tf.nix
+                { 
+                  toolchain = aarch64-none-elf;
+                  guest_name = "baremetal";
+                  platform_cfg = plat_cfg;
                   inherit list_tests; 
                   inherit list_suites;
-                  inherit bao-tests;
-                  inherit tests;
+                  bao-tests = ./bao-tests;
+                  tests_srcs = ./tests;
+                  testf_patch = ./baremetal.patch;
                 };
 
+
     # Build Hypervisor
-    bao = callPackage ./bao-nix/pkgs/bao/bao_tf.nix 
+    bao = callPackage ./bao-nix/pkgs/bao/bao.nix 
                 { 
-                  toolchain = build_toolchain; 
+                  toolchain = aarch64-none-elf; 
                   guest = baremetal; 
                   inherit demos; 
-                  inherit platform_cfg;
+                  platform_cfg = plat_cfg;
                 };
 
     # Build firmware (1/2)
     u-boot = callPackage ./bao-nix/pkgs/u-boot/u-boot.nix 
                 { 
-                  toolchain = build_toolchain; 
+                  toolchain = aarch64-none-elf; 
                 };
 
     # Build firmware (2/2)
     atf = callPackage ./bao-nix/pkgs/atf/atf.nix 
                 { 
-                  toolchain = build_toolchain; 
+                  toolchain = aarch64-none-elf; 
                   inherit u-boot; 
                   inherit platform;
                 };
