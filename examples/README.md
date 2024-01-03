@@ -258,4 +258,36 @@ sources:
  endif
 ```
 
+### 2. Run Test Framework
+Let's start by running the tests running the entire suite of tests:
+```sh
+cd $ROOT_DIR/bao-tests/framework
+python3 test_framework.py\
+  -dts_path $ROOT_DIR/tests/configs/config_suite.dts\
+  -bao_test_src_path $ROOT_DIR/bao-tests/src\
+  -tests_src_path $ROOT_DIR/tests/src
+```
+Which should produce the following output:
+```sh
+[INFO] Running HELLO    TEST_A
+[INFO] Running HELLO    TEST_B
+[INFO] Final Report
+[TESTF-C] TOTAL#2 SUCCESS#2 FAIL#0
+```
+
+Then, let's run the configuration that selects only one test, rather than the
+suite of tests:
+```sh
+cd $ROOT_DIR/bao-tests/framework
+python3 test_framework.py\
+  -dts_path $ROOT_DIR/tests/configs/config_test.dts\
+  -bao_test_src_path $ROOT_DIR/bao-tests/src\
+  -tests_src_path $ROOT_DIR/tests/src
+```
+Now, the output should be the following:
+```sh
+[INFO] Running HELLO    TEST_A
+[INFO] Final Report
+[TESTF-C] TOTAL#1 SUCCESS#1 FAIL#0
+```
 ## Local Hypervisor Sources
