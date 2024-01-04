@@ -108,6 +108,8 @@ def get_file_path(filename):
     Returns:
     - The path to the file if found, otherwise returns None.
     """
+    cur_dir = os.getcwd()
+    os.chdir("./output")
     result_directories = [
         d for d in os.listdir() if d.startswith('result') and os.path.isdir(d)
         ]
@@ -156,6 +158,31 @@ def deploy_test(platform):
 
         connection.connect_to_platform_port(diff_ports, test_config['log_echo'])
         terminate_children_processes(process)
+
+def move_results_to_output():
+    """
+    Moves all 'results' folders into the 'output' folder.
+
+    This function searches for folders named 'results' within the current
+    directory and moves them into the 'output' folder if it exists. If the
+    'output' folder does not exist, it creates the 'output' folder and moves the
+    'results' folders into it.
+    """
+    if os.path.exists('output'):
+        clean_output()
+
+    os.makedirs('output')
+
+    count = 1
+    while True:
+        old_folder = f'{"result" if count == 1 else f"result-{count}"}'
+
+        if not os.path.exists(old_folder):
+            break
+
+        new_folder = f'{"result" if count == 1 else f"result-{count}"}'
+        shutil.move(old_folder, os.path.join('./output/', new_folder))
+        count += 1
 
 if __name__ == '__main__':
 
@@ -221,6 +248,8 @@ if __name__ == '__main__':
                "nix build failed..." +
                cons.RESET_COLOR)
         sys.exit(-1)
+
+    move_results_to_output()
 
     print(cons.BLUE_TEXT + "Launching QEMU..." + cons.RESET_COLOR)
     deploy_test(test_config['platform'])
