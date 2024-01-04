@@ -6,6 +6,7 @@ Test framework main file
 """
 import argparse
 import os
+import shutil
 import sys
 import subprocess
 import psutil
@@ -41,6 +42,9 @@ def parse_args():
     parser.add_argument("-tests_src_path", "--tests_src_path",
                         help="Path to bao-test /src dir",
                         default="../../src")
+
+    parser.add_argument("-clean", action='store_true',
+                    help="Clean output directory")
 
     input_args = parser.parse_args()
     return input_args
@@ -118,6 +122,7 @@ def get_file_path(filename):
         dir_path = os.path.join(os.getcwd(), directory)
         for root, _, files in os.walk(dir_path):
             if filename in files:
+                os.chdir(cur_dir)
                 return os.path.join(root, filename)
 
     print(f"File '{filename}' not found in any 'result' directory.")
@@ -159,6 +164,23 @@ def deploy_test(platform):
         connection.connect_to_platform_port(diff_ports, test_config['log_echo'])
         terminate_children_processes(process)
 
+def clean_output():
+    """
+    Removes the folder './output/' and all its contents.
+
+    This function recursively deletes all files and subdirectories within
+    the './output/' folder and finally removes the 'output' directory itself.
+    """
+    folder_path = './output/'
+    try:
+        shutil.rmtree(folder_path)
+    except FileNotFoundError:
+        print(f"Folder '{folder_path}' not found.")
+        sys.exit(-1)
+    except OSError as err:
+        print(f"Error: {folder_path} : {err.strerror}")
+        sys.exit(-1)
+
 def move_results_to_output():
     """
     Moves all 'results' folders into the 'output' folder.
@@ -192,6 +214,18 @@ if __name__ == '__main__':
           cons.RESET_COLOR)
 
     args = parse_args()
+
+    if args.clean:
+        print(cons.BLUE_TEXT +
+            "Cleaning output directory..." +
+            cons.RESET_COLOR)
+
+        clean_output()
+
+        print(cons.GREEN_TEXT +
+            "Output directory clean!" +
+            cons.RESET_COLOR)
+        sys.exit(-1)
 
     print(cons.BLUE_TEXT +
           "Reading config.dts..." +
