@@ -71,7 +71,7 @@ extern unsigned int testframework_start, testframework_end;
 #define LOG_TESTS()                                                              \
     do {                                                                         \
         if (TESTF_LOG_LEVEL > 1) {                                               \
-            printf("\n"); \
+            printf("\n");                                                        \
             INFO_TAG();                                                          \
             printf("Final Report\n");                                            \
             if (testframework_fails)                                             \
@@ -83,34 +83,33 @@ extern unsigned int testframework_start, testframework_end;
             testframework_tests - testframework_fails, testframework_fails);     \
     } while (0)
 
-#define BAO_TEST(suite, test)                          \
-    void test_##suite##_##test(unsigned char*);        \
-    void entry_test_##suite##_##test(void)             \
-    {                                                  \
-        extern unsigned int testframework_tests;       \
-        extern unsigned int testframework_fails;       \
-        unsigned char failures = 0;                    \
-        if (TESTF_LOG_LEVEL > 1) {                     \
-            printf("\n"); \
-            INFO_TAG();                                \
-            printf("Running " #suite "\t" #test "\n"); \
-        }                                              \
-        testframework_tests++;                         \
-        test_##suite##_##test(&failures);              \
-        if (failures) {                                \
-            testframework_fails++;                     \
-            if (TESTF_LOG_LEVEL > 1) {                 \
-                FAIL_TAG();                                \
-                printf(#suite "\t" #test " failed! \n"  ); \
-            }                                              \
-        }                                              \
-        else {                                         \
-            if (TESTF_LOG_LEVEL > 1) {                 \
-                SUCC_TAG();                                \
-                printf(#suite "\t" #test " passed! \n"  ); \
-            }                                              \
-        }                                              \
-    }                                                  \
+#define BAO_TEST(suite, test)                            \
+    void test_##suite##_##test(unsigned char*);          \
+    void entry_test_##suite##_##test(void)               \
+    {                                                    \
+        extern unsigned int testframework_tests;         \
+        extern unsigned int testframework_fails;         \
+        unsigned char failures = 0;                      \
+        if (TESTF_LOG_LEVEL > 1) {                       \
+            printf("\n");                                \
+            INFO_TAG();                                  \
+            printf("Running " #suite "\t" #test "\n");   \
+        }                                                \
+        testframework_tests++;                           \
+        test_##suite##_##test(&failures);                \
+        if (failures) {                                  \
+            testframework_fails++;                       \
+            if (TESTF_LOG_LEVEL > 1) {                   \
+                FAIL_TAG();                              \
+                printf(#suite "\t" #test " failed! \n"); \
+            }                                            \
+        } else {                                         \
+            if (TESTF_LOG_LEVEL > 1) {                   \
+                SUCC_TAG();                              \
+                printf(#suite "\t" #test " passed! \n"); \
+            }                                            \
+        }                                                \
+    }                                                    \
     void test_##suite##_##test(unsigned char* failures)
 
 void testf_entry(void);
