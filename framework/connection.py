@@ -56,6 +56,19 @@ def connect_to_platform_port(ports_list, echo):
     for thread in threads:
         thread.join()
 
+def full_echo_log(serial_results):
+    """
+    Print each line in the serial results.
+
+    Args:
+        serial_results (list): A list of lines got from serial communication.
+
+    Returns:
+        None
+    """
+    for line in serial_results:
+        print(line, end="")
+    thread_finished.set()
 def listener(ser_port, echo):
     """
     Listener to receive test results
@@ -91,6 +104,10 @@ def listener(ser_port, echo):
                 if echo:
                     print(line)
                 cons.TEST_RESULTS = line
+
+        if echo == "full":
+            full_echo_log(res_log)
+
                 thread_finished.set()
 
     print(cons.BLUE_TEXT +
