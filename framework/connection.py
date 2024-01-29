@@ -71,7 +71,8 @@ def listener(ser_port, echo):
     while not stop_event.is_set():
         res = b""
         res_log = []
-        while not (res.endswith(b"\r\n") and b"[TESTF-C]" in res):
+
+        while not (res.endswith(b"\r\n") and b"[TESTF] END" in res):
             res = ser_port.readline()
             new_line = res.decode(errors='ignore')
             for old, new in replacements:
