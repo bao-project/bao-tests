@@ -69,6 +69,28 @@ def full_echo_log(serial_results):
     for line in serial_results:
         print(line, end="")
     thread_finished.set()
+
+def tf_echo_log(serial_results):
+    """
+    Filter and print serial results within the TF section.
+
+    Args:
+        serial_results (list): A list of lines got from serial communication.
+
+    Returns:
+        None
+    """
+    is_tf_section = False
+    for line in serial_results:
+        if "[TESTF] START" in line:
+            is_tf_section = True
+        elif "[TESTF] END" in line:
+            is_tf_section = False
+            print(line, end="")
+        if is_tf_section:
+            print(line, end="")
+    thread_finished.set()
+
 def listener(ser_port, echo):
     """
     Listener to receive test results
@@ -107,6 +129,9 @@ def listener(ser_port, echo):
 
         if echo == "full":
             full_echo_log(res_log)
+
+        elif echo == "tf":
+            tf_echo_log(res_log)
 
                 thread_finished.set()
 
