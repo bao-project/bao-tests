@@ -49,6 +49,11 @@ extern unsigned int testframework_start, testframework_end;
     printf("[TESTF] START\n"); \
     COLOR_RESET();
 
+#define END_TAG()            \
+    YELLOW();                \
+    printf("[TESTF] END\n"); \
+    COLOR_RESET();
+
 #if (TESTF_LOG_LEVEL > 0)
 #define LOG_FAILURE()                                                 \
     do {                                                              \
