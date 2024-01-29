@@ -261,14 +261,20 @@ if __name__ == '__main__':
 
     if len(list_suites):
         BUILD_CMD += " --argstr list_suites \""
-        for suit in list_suites:
-            BUILD_CMD += suit + " "
-        BUILD_CMD = BUILD_CMD[:-1] + "\""
+        for index, suit in enumerate(list_suites):
+            BUILD_CMD += suit
+            if index < len(list_suites) - 1:
+                BUILD_CMD += r"\ "
+        BUILD_CMD += "\""
+
     if len(list_tests):
         BUILD_CMD += " --argstr list_tests \""
-        for suit in list_tests:
-            BUILD_CMD += suit + " "
-        BUILD_CMD = BUILD_CMD[:-1] + "\""
+        for index, test in enumerate(list_tests):
+            BUILD_CMD += test
+            if index < len(list_tests) - 1:
+                BUILD_CMD += r"\ "
+        BUILD_CMD += "\""
+
 
     print(BUILD_CMD)
     res = os.system(BUILD_CMD)
