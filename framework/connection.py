@@ -133,7 +133,8 @@ def listener(ser_port, echo):
         elif echo == "tf":
             tf_echo_log(res_log)
 
-                thread_finished.set()
+        elif echo == "none":
+            thread_finished.set()
 
     print(cons.BLUE_TEXT +
           "Closing connection to " +
