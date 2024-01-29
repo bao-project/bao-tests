@@ -16,7 +16,7 @@ import connection
 
 test_config = {
     'platform': '',
-    'log_echo': '',
+    'echo': '',
     'nix_file': '',
     'suites': '',
     'tests': '',
@@ -61,7 +61,7 @@ def parse_dts_file(file_path):
         tree.children[0].properties[0].values[0]
 
     try:
-        test_config['log_echo'] = \
+        test_config['echo'] = \
             tree.children[0].properties[1].values[0]
     except (IndexError, AttributeError):
         test_config['log_echo'] = 0
@@ -161,7 +161,7 @@ def deploy_test(platform):
         # Find the difference between the initial and final pts ports
         diff_ports = connection.diff_ports(initial_pts_ports, final_pts_ports)
 
-        connection.connect_to_platform_port(diff_ports, test_config['log_echo'])
+        connection.connect_to_platform_port(diff_ports, test_config['echo'])
         terminate_children_processes(process)
 
 def clean_output():
