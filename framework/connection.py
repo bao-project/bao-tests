@@ -114,18 +114,16 @@ def listener(ser_port, echo):
                 new_line = new_line.replace(old, new)
             res_log.append(new_line)
 
-            if (b"[INFO]" in res) and (echo):
-                print(new_line, end="")
+            if "[TESTF-C]" in new_line:
+                cons.TEST_RESULTS = new_line
 
             if stop_event.is_set():
                 break
 
-        for line in res_log:
-            #print("line: " + line)
+        for line in reversed(res_log):
             if "[TESTF-C]" in line:
-                if echo:
-                    print(line)
                 cons.TEST_RESULTS = line
+                break
 
         if echo == "full":
             full_echo_log(res_log)
