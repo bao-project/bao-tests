@@ -82,9 +82,9 @@ def tf_echo_log(serial_results):
     """
     is_tf_section = False
     for line in serial_results:
-        if "[TESTF] START" in line:
+        if cons.C_TAG + " START" in line:
             is_tf_section = True
-        elif "[TESTF] END" in line:
+        elif cons.C_TAG + " END" in line:
             is_tf_section = False
             print(line, end="")
         if is_tf_section:
@@ -107,7 +107,7 @@ def listener(ser_port, echo):
         res = b""
         res_log = []
 
-        while not (res.endswith(b"\r\n") and b"[TESTF] END" in res):
+        while not (res.endswith(b"\r\n") and (cons.C_TAG + " END").encode('utf-8') in res):
             res = ser_port.readline()
             new_line = res.decode(errors='ignore')
             for old, new in replacements:
