@@ -16,7 +16,6 @@ import connection
 
 test_config = {
     'platform': '',
-    'echo': '',
     'nix_file': '',
     'suites': '',
     'tests': '',
@@ -44,6 +43,13 @@ def parse_args():
     parser.add_argument("-clean", action='store_true',
                     help="Clean output directory")
 
+    parser.add_argument("-echo", "--echo",
+                    help="Allows to define the filtering of the framework: "
+                         "full - does not filter any information"
+                         "tf - filters logging not produced by the framework"
+                         "none - filter every logging",
+                    default="tf")
+
     input_args = parser.parse_args()
     return input_args
 
@@ -57,12 +63,6 @@ def parse_dts_file(file_path):
     tree = Devicetree.parseFile(file_path)
     test_config['platform'] = \
         tree.children[0].properties[0].values[0]
-
-    try:
-        test_config['echo'] = \
-            tree.children[0].properties[1].values[0]
-    except (IndexError, AttributeError):
-        test_config['log_echo'] = 0
 
     test_config['nix_file'] = \
         tree.children[0].children[0].children[0].properties[0].values[0]
@@ -159,7 +159,7 @@ def deploy_test(platform):
         # Find the difference between the initial and final pts ports
         diff_ports = connection.diff_ports(initial_pts_ports, final_pts_ports)
 
-        connection.connect_to_platform_port(diff_ports, test_config['echo'])
+        connection.connect_to_platform_port(diff_ports, args.echo)
         terminate_children_processes(process)
 
 def clean_output():
