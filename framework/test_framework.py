@@ -19,7 +19,6 @@ test_config = {
     'nix_file': '',
     'suites': '',
     'tests': '',
-    'log_level': ''
 }
 
 def parse_args():
@@ -50,6 +49,14 @@ def parse_args():
                          "none - filter every logging",
                     default="tf")
 
+    parser.add_argument("-log_level", "--log_level",
+                    help="Allows to define the amount of information produced"
+                         "by the framework: "
+                         "0 - only logs the final report, "
+                         "1 - logs failed tests and the final report, "
+                         "2 - logs all test results and the final report",
+                    default=0)
+
     input_args = parser.parse_args()
     return input_args
 
@@ -70,8 +77,6 @@ def parse_dts_file(file_path):
         tree.children[0].children[0].children[0].properties[1].values[0]
     test_config['tests'] = \
         tree.children[0].children[0].children[0].properties[2].values[0]
-    test_config['log_level'] = \
-        tree.children[0].children[0].children[0].properties[3].values[0]
 
 def run_command_in_terminal(command):
     """
@@ -257,7 +262,7 @@ if __name__ == '__main__':
     list_suites = test_config['suites'].split()
     list_tests = test_config['tests'].split()
     BUILD_CMD += " --argstr platform " + test_config['platform']
-    BUILD_CMD += " --argstr log_level " + test_config['log_level']
+    BUILD_CMD += " --argstr log_level " + str(args.log_level)
 
     if len(list_suites):
         BUILD_CMD += " --argstr list_suites \""
