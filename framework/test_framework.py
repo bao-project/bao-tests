@@ -74,9 +74,9 @@ def parse_dts_file(file_path):
     test_config['nix_file'] = \
         tree.children[0].children[0].children[0].properties[0].values[0]
     test_config['suites'] = \
-        tree.children[0].children[0].children[0].properties[1].values[0]
+        tree.children[0].children[0].children[0].properties[1].values
     test_config['tests'] = \
-        tree.children[0].children[0].children[0].properties[2].values[0]
+        tree.children[0].children[0].children[0].properties[2].values
 
 def run_command_in_terminal(command):
     """
@@ -259,8 +259,8 @@ if __name__ == '__main__':
 
     print(cons.BLUE_TEXT + "Running nix build..." + cons.RESET_COLOR)
     BUILD_CMD = 'nix-build ../../' + test_config['nix_file']
-    list_suites = test_config['suites'].split()
-    list_tests = test_config['tests'].split()
+    list_suites = test_config['suites']
+    list_tests = test_config['tests']
     BUILD_CMD += " --argstr platform " + test_config['platform']
     BUILD_CMD += " --argstr log_level " + str(args.log_level)
 
