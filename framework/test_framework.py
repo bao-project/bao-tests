@@ -259,21 +259,26 @@ if __name__ == '__main__':
 
     print(cons.BLUE_TEXT + "Running nix build..." + cons.RESET_COLOR)
     BUILD_CMD = 'nix-build ../../' + test_config['nix_file']
-    list_suites = test_config['suites']
-    list_tests = test_config['tests']
+    LIST_SUITES = test_config['suites']
+    LIST_TESTS = test_config['tests']
     BUILD_CMD += " --argstr platform " + test_config['platform']
     BUILD_CMD += " --argstr log_level " + str(args.log_level)
 
-    if len(list_suites):
+    if LIST_SUITES:
         BUILD_CMD += " --argstr list_suites \""
-        for suit in list_suites:
-            BUILD_CMD += suit + " "
-        BUILD_CMD = BUILD_CMD[:-1] + "\""
-    if len(list_tests):
+        for index, suit in enumerate(LIST_SUITES):
+            BUILD_CMD += suit
+            if index < len(LIST_SUITES) - 1:
+                BUILD_CMD += r"\ "
+        BUILD_CMD += "\""
+
+    if LIST_TESTS:
         BUILD_CMD += " --argstr list_tests \""
-        for suit in list_tests:
-            BUILD_CMD += suit + " "
-        BUILD_CMD = BUILD_CMD[:-1] + "\""
+        for index, test in enumerate(LIST_TESTS):
+            BUILD_CMD += test
+            if index < len(LIST_TESTS) - 1:
+                BUILD_CMD += r"\ "
+        BUILD_CMD += "\""
 
     print(BUILD_CMD)
     res = os.system(BUILD_CMD)
