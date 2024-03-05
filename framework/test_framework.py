@@ -252,8 +252,8 @@ if __name__ == '__main__':
         recipe = args.recipe
         print("Recipe .nix file: " + recipe)
 
-    BUILD_CMD = 'nix-build ../../' + test_config['nix_file']
-    BUILD_CMD += " --argstr platform " + test_config['platform']
+    BUILD_CMD = 'nix-build ' + recipe
+    BUILD_CMD += " --argstr platform " + platform
     BUILD_CMD += " --argstr log_level " + str(args.log_level)
 
     print(BUILD_CMD)
@@ -272,4 +272,4 @@ if __name__ == '__main__':
     move_results_to_output()
 
     print(cons.BLUE_TEXT + "Launching QEMU..." + cons.RESET_COLOR)
-    deploy_test(test_config['platform'])
+    deploy_test(platform)
