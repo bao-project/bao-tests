@@ -11,7 +11,6 @@ import sys
 import subprocess
 import psutil
 import constants as cons
-from pydevicetree import Devicetree
 import connection
 
 test_config = {
@@ -26,10 +25,6 @@ def parse_args():
     Parse python script arguments.
     """
     parser = argparse.ArgumentParser(description="Bao Testing Framework")
-
-    parser.add_argument("-dts_path", "--dts_path",
-                        help="Path to .dts configuration file",
-                        default="../../configs/config.dts")
 
     parser.add_argument("-bao_test_src_path", "--bao_test_src_path",
                         help="Path to bao-test /src dir",
@@ -59,24 +54,6 @@ def parse_args():
 
     input_args = parser.parse_args()
     return input_args
-
-def parse_dts_file(file_path):
-    """
-    Parse a DTS (Device Tree Source) file and extract relevant information.
-
-    Args:
-        file_path (str): The path to the DTS configuration file.
-    """
-    tree = Devicetree.parseFile(file_path)
-    test_config['platform'] = \
-        tree.children[0].properties[0].values[0]
-
-    test_config['nix_file'] = \
-        tree.children[0].children[0].children[0].properties[0].values[0]
-    test_config['suites'] = \
-        tree.children[0].children[0].children[0].properties[1].values
-    test_config['tests'] = \
-        tree.children[0].children[0].children[0].properties[2].values
 
 def run_command_in_terminal(command):
     """
@@ -240,23 +217,6 @@ if __name__ == '__main__':
         sys.exit(-1)
 
     print(cons.BLUE_TEXT +
-          "Reading config.dts..." +
-          cons.RESET_COLOR)
-
-    dts_path = args.dts_path
-    print("config.dts file: " + dts_path)
-
-    if args.dts_path is None:
-        print(cons.RED_TEXT +
-              "Error: Please provide the --dts_path argument." +
-              cons.RESET_COLOR)
-    else:
-        dts_path = args.dts_path
-
-    parse_dts_file(dts_path)
-    print(cons.GREEN_TEXT + "config.dts successfully read!" + cons.RESET_COLOR)
-
-    print(cons.BLUE_TEXT +
           "Creating tests source file..." +
           cons.RESET_COLOR)
 
@@ -268,26 +228,8 @@ if __name__ == '__main__':
 
     print(cons.BLUE_TEXT + "Running nix build..." + cons.RESET_COLOR)
     BUILD_CMD = 'nix-build ../../' + test_config['nix_file']
-    LIST_SUITES = test_config['suites']
-    LIST_TESTS = test_config['tests']
     BUILD_CMD += " --argstr platform " + test_config['platform']
     BUILD_CMD += " --argstr log_level " + str(args.log_level)
-
-    if LIST_SUITES:
-        BUILD_CMD += " --argstr list_suites \""
-        for index, suit in enumerate(LIST_SUITES):
-            BUILD_CMD += suit
-            if index < len(LIST_SUITES) - 1:
-                BUILD_CMD += r"\ "
-        BUILD_CMD += "\""
-
-    if LIST_TESTS:
-        BUILD_CMD += " --argstr list_tests \""
-        for index, test in enumerate(LIST_TESTS):
-            BUILD_CMD += test
-            if index < len(LIST_TESTS) - 1:
-                BUILD_CMD += r"\ "
-        BUILD_CMD += "\""
 
     print(BUILD_CMD)
     res = os.system(BUILD_CMD)
