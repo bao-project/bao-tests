@@ -52,6 +52,14 @@ def parse_args():
                          "2 - logs all test results and the final report",
                     default=0)
 
+    parser.add_argument("-recipe", "--recipe",
+                    help="Path to the .nix recipe file",
+                    default="../../recipes/single-baremetal/default.nix")
+
+    parser.add_argument("-platform", "--platform",
+                    help="Used define the target platform",
+                    default=" ")
+
     input_args = parser.parse_args()
     return input_args
 
