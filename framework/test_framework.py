@@ -138,7 +138,7 @@ def deploy_test(platform):
     Args:
         platform (str): The platform to deploy the test on.
     """
-    if platform in ["qemu-aarch64-virt", "qemu-riscv64-virt"]:
+    if platform in ["qemu-aarch64-virt"]:
         arch = platform.split("-")[1]
         bao_bin_path = get_file_path("bao.bin")
         flash_bin_path = get_file_path("flash.bin")
@@ -147,25 +147,34 @@ def deploy_test(platform):
         run_cmd += " " + flash_bin_path
         run_cmd += " " + bao_bin_path
 
-        # Get the ports opened before running QEMU
-        initial_pts_ports = connection.scan_pts_ports()
+    elif platform in ["qemu-riscv64-virt"]:
+        arch = platform.split("-")[1]
+        bao_bin_path = get_file_path("bao.bin")
+        opensbi_elf_path = get_file_path("opensbi.elf")
+        run_cmd = "./launch/qemu-riscv64-virt.sh"
+        run_cmd += " " + arch
+        run_cmd += " " + opensbi_elf_path
+        run_cmd += " " + bao_bin_path
 
-        # Launch QEMU
-        process = run_command_in_terminal(run_cmd)
+    # Get the ports opened before running QEMU
+    initial_pts_ports = connection.scan_pts_ports()
 
-        # Initially set the end ports as the ports obtained before running QEMU
-        final_pts_ports = initial_pts_ports
+    # Launch QEMU
+    process = run_command_in_terminal(run_cmd)
 
-        # Continuously scan for ports until the ports after running QEMU differ
-        # from the initial ports; this retrieves the pts ports opened by QEMU
-        while final_pts_ports == initial_pts_ports:
-            final_pts_ports = connection.scan_pts_ports()
+    # Initially set the end ports as the ports obtained before running QEMU
+    final_pts_ports = initial_pts_ports
 
-        # Find the difference between the initial and final pts ports
-        diff_ports = connection.diff_ports(initial_pts_ports, final_pts_ports)
+    # Continuously scan for ports until the ports after running QEMU differ
+    # from the initial ports; this retrieves the pts ports opened by QEMU
+    while final_pts_ports == initial_pts_ports:
+        final_pts_ports = connection.scan_pts_ports()
 
-        connection.connect_to_platform_port(diff_ports, args.echo)
-        terminate_children_processes(process)
+    # Find the difference between the initial and final pts ports
+    diff_ports = connection.diff_ports(initial_pts_ports, final_pts_ports)
+
+    connection.connect_to_platform_port(diff_ports, args.echo)
+    terminate_children_processes(process)
 
 def clean_output():
     """
