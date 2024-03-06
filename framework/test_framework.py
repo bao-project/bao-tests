@@ -226,6 +226,22 @@ if __name__ == '__main__':
     os.system(RUN_CMD)
 
     print(cons.BLUE_TEXT + "Running nix build..." + cons.RESET_COLOR)
+
+    if args.platform is None:
+        print(cons.RED_TEXT +
+        "Error: Please provide a --platform." +
+        cons.RESET_COLOR)
+    else:
+        platfrm = args.platform
+
+    if args.recipe is None:
+        print(cons.RED_TEXT +
+        "Error: Please provide the --recipe argument." +
+        cons.RESET_COLOR)
+    else:
+        recipe = args.recipe
+        print("Recipe .nix file: " + recipe)
+
     BUILD_CMD = 'nix-build ../../' + test_config['nix_file']
     BUILD_CMD += " --argstr platform " + test_config['platform']
     BUILD_CMD += " --argstr log_level " + str(args.log_level)
