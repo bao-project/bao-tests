@@ -142,7 +142,7 @@ def deploy_test(platform):
         arch = platform.split("-")[1]
         bao_bin_path = get_file_path("bao.bin")
         flash_bin_path = get_file_path("flash.bin")
-        run_cmd = "./platform/qemu/run.sh"
+        run_cmd = "./launch/qemu-aarch64-virt.sh"
         run_cmd += " " + arch
         run_cmd += " " + flash_bin_path
         run_cmd += " " + bao_bin_path
