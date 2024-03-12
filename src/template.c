@@ -7,23 +7,30 @@
 #include "testf.h"
 #include <stdio.h>
 #include <string.h>
+#include <cpu.h>
 
 unsigned int testframework_tests;
 unsigned int testframework_fails;
 
+spinlock_t print_lock = SPINLOCK_INITVAL;
+
 void testf_entry(void)
 {
-    START_TAG();
+    if(cpu_is_master()){
+        START_TAG();
+    }
     // codegen.py section begin
 
     // codegen.py section end
 
-    if (testframework_tests > 0) {
-        LOG_TESTS();
-    } else {
-        INFO_TAG();
-        printf("No tests were executed!\n");
+    if(cpu_is_master()){
+        if (testframework_tests > 0) {
+            LOG_TESTS();
+        } else {
+            INFO_TAG();
+            printf("No tests were executed!\n");
+        }
+        END_TAG();
     }
-    END_TAG();
     return;
 }
