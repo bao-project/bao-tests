@@ -12,7 +12,7 @@
 unsigned int testframework_tests;
 unsigned int testframework_fails;
 
-spinlock_t print_lock = SPINLOCK_INITVAL;
+spinlock_t tf_lock = SPINLOCK_INITVAL;
 
 void testf_entry(void)
 {
