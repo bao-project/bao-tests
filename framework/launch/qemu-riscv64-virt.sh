@@ -10,7 +10,9 @@ fi
 qemu_platform="$1"
 opensbi_elf_path="$2"
 bao_bin_path="$3"
-# -s -S -nographic\
+
+qemu_stderr=$(mktemp)
+
 qemu-system-riscv64 -nographic \
     -M virt -cpu rv64 -m 4G -smp 4 \
     -bios $opensbi_elf_path \
@@ -18,4 +20,13 @@ qemu-system-riscv64 -nographic \
     -device virtio-net-device,netdev=net0 \
     -netdev user,id=net0,net=192.168.42.0/24,hostfwd=tcp:127.0.0.1:5555-:22 \
     -device virtio-serial-device -chardev pty,id=serial3 -device virtconsole,chardev=serial3 \
-    -serial pty
+    -serial pty 2> "$qemu_stderr"
+    
+# Check if QEMU produced the specific error message
+if grep -q "Could not set up host forwarding rule 'tcp:127.0.0.1:5555-:22'" "$qemu_stderr"; then
+    echo "QEMU produced the specific error message related to host forwarding."
+    exit -1
+fi
+
+rm "$qemu_stderr"
+exit 0

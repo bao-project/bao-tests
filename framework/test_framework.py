@@ -146,6 +146,12 @@ def deploy_test(platform):
 
     # Launch QEMU
     process = run_command_in_terminal(run_cmd)
+    process.wait()
+    if process.returncode:
+        print(cons.RED_TEXT +
+            f"Error launching QEMU (exited with code {process.returncode})" +
+            cons.RESET_COLOR)
+        sys.exit(-1)
 
     # Initially set the end ports as the ports obtained before running QEMU
     final_pts_ports = initial_pts_ports
