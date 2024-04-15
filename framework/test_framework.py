@@ -154,6 +154,11 @@ def deploy_test(platform):
     # from the initial ports; this retrieves the pts ports opened by QEMU
     while final_pts_ports == initial_pts_ports:
         final_pts_ports = connection.scan_pts_ports()
+        if process.poll():
+            print(cons.RED_TEXT +
+                f"Error launching QEMU (exited with code {process.returncode})" +
+                cons.RESET_COLOR)
+            sys.exit(-1)
 
     # Find the difference between the initial and final pts ports
     diff_ports = connection.diff_ports(initial_pts_ports, final_pts_ports)
