@@ -229,15 +229,6 @@ if __name__ == '__main__':
             cons.RESET_COLOR)
         sys.exit(-1)
 
-    print(cons.BLUE_TEXT +
-          "Creating tests source file..." +
-          cons.RESET_COLOR)
-
-    bao_test_src = args.bao_test_src_path
-    tests_src = args.tests_src_path
-    RUN_CMD = "python3 codegen.py -dir " + tests_src + " "
-    RUN_CMD += "-o " + bao_test_src + "/testf_entry.c"
-    os.system(RUN_CMD)
 
     print(cons.BLUE_TEXT + "Running nix build..." + cons.RESET_COLOR)
 
