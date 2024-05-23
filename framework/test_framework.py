@@ -13,6 +13,9 @@ import psutil
 import constants as cons
 import connection
 
+script_dir = os.path.dirname(os.path.abspath(__file__))
+os.chdir(script_dir)
+
 test_config = {
     'platform': '',
     'nix_file': '',
