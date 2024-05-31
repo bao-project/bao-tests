@@ -68,7 +68,13 @@ def parse_args():
                     help="Used to define the GIC version setup for the platform",
                     default="")
     parser.add_argument("-irqc", "--irqc",
-                    help="Used to define the IRQ setup for the platform")
+                    required=False,
+                    help="Used to define the IRQ controller setup for the platform",
+                    default="")
+    parser.add_argument("-ipic", "--ipic",
+                    required=False,
+                    help="Used to define the IPIC setup for the platform",
+                    default="")
 
     input_args = parser.parse_args()
     return input_args
@@ -264,7 +270,12 @@ if __name__ == '__main__':
     BUILD_CMD += " --argstr platform " + platfrm
     BUILD_CMD += " --argstr log_level " + str(args.log_level)
 
-    print(BUILD_CMD)
+    if args.gicv:
+        BUILD_CMD += " --argstr irq_controller " + args.gicv
+    else:
+        BUILD_CMD += " --argstr irq_controller " + args.irqc + "\\ " + args.ipic
+
+    print("Building with command: " + BUILD_CMD)
     res = os.system(BUILD_CMD)
     if res==0:
         print(cons.GREEN_TEXT +
