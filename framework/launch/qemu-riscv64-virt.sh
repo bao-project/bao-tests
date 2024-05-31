@@ -1,5 +1,5 @@
 #!/usr/bin/env nix-shell
-#!nix-shell --pure -p qemu -i bash
+#!nix-shell --pure -p unixtools.netstat -p qemu -i bash
 
 # Check if a version argument is provided
 if [ -z "$2" ]; then
