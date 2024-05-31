@@ -2,14 +2,15 @@
 #!nix-shell --pure -p unixtools.netstat -p qemu -i bash
 
 # Check if a version argument is provided
-if [ -z "$2" ]; then
-    echo "Usage: $0 <qemu-platform> <flash_bin_path> <bao-bin-path>"
+if [ -z "$4" ]; then
+    echo "Usage: $0 <qemu-platform> <flash_bin_path> <bao-bin-path> <gic_version>"
     exit 1
 fi
 
 qemu_platform="$1"
 flash_bin_path="$2"
 bao_bin_path="$3"
+gic_version="$4"
 
 if netstat -tuln | grep ":5555 " &>/dev/null; then
     exit -1
@@ -18,7 +19,7 @@ fi
 qemu_stderr=$(mktemp)
 
 qemu-system-"$qemu_platform" -nographic \
-    -M virt,secure=on,virtualization=on,gic-version=3 \
+    -M virt,secure=on,virtualization=on,gic-version=$gic_version \
     -cpu cortex-a53 -smp 4 -m 4G \
     -bios "$flash_bin_path" \
     -device loader,file="$bao_bin_path",addr=0x50000000,force-raw=on \
