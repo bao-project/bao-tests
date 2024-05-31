@@ -63,6 +63,13 @@ def parse_args():
                     help="Used define the target platform",
                     default=" ")
 
+    parser.add_argument("-gicv", "--gicv",
+                    required=False,
+                    help="Used to define the GIC version setup for the platform",
+                    default="")
+    parser.add_argument("-irqc", "--irqc",
+                    help="Used to define the IRQ setup for the platform")
+
     input_args = parser.parse_args()
     return input_args
 
@@ -119,7 +126,7 @@ def get_file_path(filename):
     print(f"File '{filename}' not found in any 'result' directory.")
     sys.exit(-1)
 
-def deploy_test(platform):
+def deploy_test(platform, gicv):
     """
     Deploy a test on a specific platform.
 
@@ -130,10 +137,13 @@ def deploy_test(platform):
         arch = platform.split("-")[1]
         bao_bin_path = get_file_path("bao.bin")
         flash_bin_path = get_file_path("flash.bin")
+        gic_version = gicv.split("GICV")[1]
+
         run_cmd = "./launch/qemu-aarch64-virt.sh"
         run_cmd += " " + arch
         run_cmd += " " + flash_bin_path
         run_cmd += " " + bao_bin_path
+        run_cmd += " " + str(gic_version)
 
     elif platform in ["qemu-riscv64-virt"]:
         arch = platform.split("-")[1]
@@ -269,5 +279,6 @@ if __name__ == '__main__':
 
     move_results_to_output()
 
+    print("Interrupt Controller: " + args.gicv)
     print(cons.BLUE_TEXT + "Launching QEMU..." + cons.RESET_COLOR)
-    deploy_test(platfrm)
+    deploy_test(platfrm, args.gicv)
