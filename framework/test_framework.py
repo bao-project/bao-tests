@@ -280,9 +280,10 @@ if __name__ == '__main__':
     BUILD_CMD += " --argstr log_level " + str(args.log_level)
 
     if args.gicv:
-        BUILD_CMD += " --argstr irq_controller " + args.gicv
+        BUILD_CMD += " --argstr GIC_VERSION " + args.gicv
     else:
-        BUILD_CMD += " --argstr irq_controller " + args.irqc + "\\ " + args.ipic
+        BUILD_CMD += " --argstr IRQC " + args.irqc + "\\ "
+        BUILD_CMD +=  "--argstr IPIC " + args.ipic
 
     print("Building with command: " + BUILD_CMD)
     res = os.system(BUILD_CMD)
