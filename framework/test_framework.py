@@ -281,9 +281,10 @@ if __name__ == '__main__':
 
     if args.gicv:
         BUILD_CMD += " --argstr GIC_VERSION " + args.gicv
-    else:
-        BUILD_CMD += " --argstr IRQC " + args.irqc + "\\ "
-        BUILD_CMD +=  "--argstr IPIC " + args.ipic
+    if args.irqc:
+        BUILD_CMD += " --argstr IRQC " + args.irqc
+    if args.ipic:
+        BUILD_CMD += " --argstr IPIC " + args.ipic
 
     print("Building with command: " + BUILD_CMD)
     res = os.system(BUILD_CMD)
