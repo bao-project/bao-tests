@@ -147,15 +147,14 @@ def open_connection(port):
     """
     Validate connection between test framework and platform
     """
-
-    port_name = '/dev/pts/' + str(port)
-    ser = serial.Serial(port_name,
+    print("Port: ", port)
+    ser = serial.Serial(port,
                         cons.UART_BAUDRATE,
                         timeout=cons.UART_TIMEOUT
                         )
     print(cons.BLUE_TEXT +
           "Connecting to " +
-          port_name +
+          port +
           "..." +
           cons.RESET_COLOR)
 
