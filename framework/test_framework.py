@@ -139,51 +139,78 @@ def deploy_test(platform, gicv):
     Args:
         platform (str): The platform to deploy the test on.
     """
-    if platform in ["qemu-aarch64-virt"]:
-        arch = platform.split("-")[1]
-        bao_bin_path = get_file_path("bao.bin")
-        flash_bin_path = get_file_path("flash.bin")
-        gic_version = gicv.split("GICV")[1]
+    if "qemu" in platform:
+        if platform in ["qemu-aarch64-virt"]:
+            arch = platform.split("-")[1]
+            bao_bin_path = get_file_path("bao.bin")
+            flash_bin_path = get_file_path("flash.bin")
+            gic_version = gicv.split("GICV")[1]
 
-        run_cmd = "./launch/qemu-aarch64-virt.sh"
-        run_cmd += " " + arch
-        run_cmd += " " + flash_bin_path
-        run_cmd += " " + bao_bin_path
-        run_cmd += " " + str(gic_version)
+            run_cmd = "./launch/qemu-aarch64-virt.sh"
+            run_cmd += " " + arch
+            run_cmd += " " + flash_bin_path
+            run_cmd += " " + bao_bin_path
+            run_cmd += " " + str(gic_version)
 
-    elif platform in ["qemu-riscv64-virt"]:
-        arch = platform.split("-")[1]
-        bao_bin_path = get_file_path("bao.bin")
-        opensbi_elf_path = get_file_path("opensbi.elf")
-        run_cmd = "./launch/qemu-riscv64-virt.sh"
-        run_cmd += " " + arch
-        run_cmd += " " + opensbi_elf_path
-        run_cmd += " " + bao_bin_path
+        elif platform in ["qemu-riscv64-virt"]:
+            arch = platform.split("-")[1]
+            bao_bin_path = get_file_path("bao.bin")
+            opensbi_elf_path = get_file_path("opensbi.elf")
+            run_cmd = "./launch/qemu-riscv64-virt.sh"
+            run_cmd += " " + arch
+            run_cmd += " " + opensbi_elf_path
+            run_cmd += " " + bao_bin_path
 
-    # Get the ports opened before running QEMU
-    initial_pts_ports = connection.scan_pts_ports()
+        # Get the ports opened before running QEMU
+        initial_pts_ports = connection.scan_pts_ports()
 
-    # Launch QEMU
-    process = run_command_in_terminal(run_cmd)
+        # Launch QEMU
+        process = run_command_in_terminal(run_cmd)
 
-    # Initially set the end ports as the ports obtained before running QEMU
-    final_pts_ports = initial_pts_ports
+        # Initially set the end ports as the ports obtained before running QEMU
+        final_pts_ports = initial_pts_ports
 
-    # Continuously scan for ports until the ports after running QEMU differ
-    # from the initial ports; this retrieves the pts ports opened by QEMU
-    while final_pts_ports == initial_pts_ports:
-        final_pts_ports = connection.scan_pts_ports()
-        if process.poll():
-            print(cons.RED_TEXT +
-                f"Error launching QEMU (exited with code {process.returncode})" +
-                cons.RESET_COLOR)
-            sys.exit(-1)
+        # Continuously scan for ports until the ports after running QEMU differ
+        # from the initial ports; this retrieves the pts ports opened by QEMU
+        while final_pts_ports == initial_pts_ports:
+            final_pts_ports = connection.scan_pts_ports()
+            if process.poll():
+                print(cons.RED_TEXT +
+                    f"Error launching QEMU (exited with code {process.returncode})" +
+                    cons.RESET_COLOR)
+                sys.exit(-1)
+        # Find the difference between the initial and final pts ports
+        diff_ports = connection.diff_ports(initial_pts_ports, final_pts_ports)
+        list_ports = []
+    
+        for port in diff_ports:
+            list_ports.append(f"/dev/pts/{port}")
 
-    # Find the difference between the initial and final pts ports
-    diff_ports = connection.diff_ports(initial_pts_ports, final_pts_ports)
+        connection.connect_to_platform_port(list_ports, args.echo)
+        terminate_children_processes(process)
 
-    connection.connect_to_platform_port(diff_ports, args.echo)
-    terminate_children_processes(process)
+    else:
+        if platform in ["zcu104"]:
+            firmware_path = get_file_path("zynqmp_fsbl.elf")
+            firmware_path = os.path.dirname(firmware_path)
+            run_cmd = "./launch/zcu104.sh"
+            run_cmd += " " + "./launch/zcu104.tcl"
+            run_cmd += " " + firmware_path
+            
+            bao_img = get_file_path(bao_img)
+            print(bao_img)
+            # connection.copy_file_to_tftpboot(bao_img)
+            process = run_command_in_terminal(run_cmd)
+            process.wait()
+
+            if process.returncode != 0:
+                print(cons.RED_TEXT +
+                        f"Error launching tests (exited with code {process.returncode})" +
+                        cons.RESET_COLOR)
+                sys.exit(-1)
+    
+            connection.connect_to_platform_port(["/dev/ttyUSB1"], args.echo)
+            terminate_children_processes(process)
 
 def clean_output():
     """
@@ -293,5 +320,5 @@ if __name__ == '__main__':
     move_results_to_output()
 
     print("Interrupt Controller: " + args.gicv)
-    print(cons.BLUE_TEXT + "Launching QEMU..." + cons.RESET_COLOR)
+    print(cons.BLUE_TEXT + "Launching test..." + cons.RESET_COLOR)
     deploy_test(platfrm, args.gicv)
