@@ -109,6 +109,7 @@ def listener(ser_port, echo):
 
         while not (res.endswith(b"\r\n") and (cons.C_TAG + " END").encode('utf-8') in res):
             res = ser_port.readline()
+            print(res)
             new_line = res.decode(errors='ignore')
             for old, new in replacements:
                 new_line = new_line.replace(old, new)
@@ -162,3 +163,11 @@ def open_connection(port):
     ser.open()
 
     return ser
+
+def copy_file_to_tftpboot(img_file):
+    cp_command = ["sudo", "cp", img_file, "/tftpboot"]
+    try:
+        subprocess.run(cp_command, check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"An error occurred while copying the image file: {e}")
+        return
