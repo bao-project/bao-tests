@@ -56,16 +56,41 @@ class QemuRiscv64Virt(GenericEmulator):  # pylint: disable=too-many-instance-att
         self.cpu_freq = CPU_FREQ
         self.timer_freq = TIMER_FREQ
         self.platform_name = "qemu-riscv64-virt"
+        self.qemu_bin = ""
 
         os.makedirs(self.firmware_dir, exist_ok=True)
         os.makedirs(self.srcs_dir, exist_ok=True)
 
+    def _supported_qemu(self, qemu_bin):
+        """Return whether a QEMU binary matches the supported version."""
+        if not qemu_bin or not os.path.isfile(qemu_bin):
+            return False
+        result = subprocess.run(
+            [qemu_bin, "--version"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            check=False,
+        )
+        return result.returncode == 0 and f"version {self.qemu_version}" in result.stdout
+
     def setup_platform(self):
-        """Install QEMU if it is not already available on the host."""
-        if shutil.which("qemu-system-riscv64") is not None:
+        """Locate or build the supported QEMU version."""
+        system_qemu = shutil.which("qemu-system-riscv64")
+        if self._supported_qemu(system_qemu):
+            self.qemu_bin = system_qemu
             return
 
-        print_log("INFO", "QEMU riscv64 not found. Installing...", tab_level=1)
+        local_qemu = os.path.join(self.srcs_dir, "build", "qemu-system-riscv64")
+        if self._supported_qemu(local_qemu):
+            self.qemu_bin = local_qemu
+            return
+
+        print_log(
+            "INFO",
+            f"Building QEMU riscv64 v{self.qemu_version} locally...",
+            tab_level=1,
+        )
         os.makedirs(self.srcs_dir, exist_ok=True)
 
         print_log("INFO", f"Cloning {self.git_repo}...", tab_level=1)
@@ -95,12 +120,12 @@ class QemuRiscv64Virt(GenericEmulator):  # pylint: disable=too-many-instance-att
             cwd=self.srcs_dir, log_tab_level=1,
         ).wait()
 
-        print_log("INFO", "Installing QEMU (sudo may prompt for password)...", tab_level=1)
-        super().run_command(
-            ["sudo", "make", "install"],
-            cwd=self.srcs_dir, log_tab_level=1,
-        ).wait()
+        if not self._supported_qemu(local_qemu):
+            raise RuntimeError(
+                f"QEMU build did not produce v{self.qemu_version} at {local_qemu}"
+            )
 
+        self.qemu_bin = local_qemu
         print_log("SUCCESS", f"QEMU {self.qemu_version} ready!", tab_level=1)
 
     def build_toolchain(self):
@@ -145,9 +170,9 @@ class QemuRiscv64Virt(GenericEmulator):  # pylint: disable=too-many-instance-att
     def _qemu_command(self, opensbi_elf, guest_os):
         """Build the QEMU command line."""
         return [
-            "qemu-system-riscv64",
+            self.qemu_bin,
             "-nographic",
-            "-M", "virt,aia=aplic-imsic",
+            "-M", "virt,aia=aplic-imsic,aia-guests=1",
             "-cpu", "rv64",
             "-m", "4G",
             "-smp", "4",
