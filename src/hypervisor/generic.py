@@ -18,11 +18,7 @@ if SRC_DIR not in sys.path:
 
 print_log = getattr(importlib.import_module("constants"), "print_log")
 
-# Import shared run_cmd so this module does not duplicate its definition.
-from utils.process import run_cmd  # pylint: disable=wrong-import-position,import-error
-
-
-class GenericHypervisor:
+class GenericHypervisor:  # pylint: disable=too-few-public-methods
     """Base hypervisor helper with source management and build helpers."""
 
     def __init__(self, wrkdir, srcs_path=""):
@@ -35,25 +31,8 @@ class GenericHypervisor:
         """
         self.wrkdir = wrkdir
         self.srcs_path = srcs_path
-        self.git_repo = ""
-        self.git_rev = ""
-
     def fetch_sources(self, hypervisor_srcs):
         """Fetch or select hypervisor sources in subclasses."""
-
-    def clone_hypervisor(self, git_repo, git_rev, srcs_path): # pylint: disable=no-self-use
-        """Clone the hypervisor sources and checkout the requested revision."""
-        git_dir = os.path.join(srcs_path, ".git")
-        if not os.path.exists(git_dir):
-            print_log("INFO", "Fetching hypervisor sources...", tab_level=2)
-            run_cmd(["git", "clone", git_repo, srcs_path])
-            run_cmd(["git", "checkout", git_rev], cwd=srcs_path)
-            return
-        print_log("INFO", "Hypervisor sources already present.", tab_level=2)
-
-    def clean(self, directory): # pylint: disable=no-self-use
-        """Run the hypervisor clean target in the given directory."""
-        run_cmd(["make", "clean"], cwd=directory)
 
 
 class StandaloneGenericHypervisor:
@@ -78,11 +57,6 @@ class StandaloneGenericHypervisor:
         elf_name = "guest1.elf"
         out_img = os.path.join(wrkdir_imgs, bin_name)
         return out_img, bin_name, elf_name
-
-    @staticmethod
-    def clean(directory):  # pylint: disable=unused-argument
-        """Do nothing for standalone artifacts."""
-
 
 generic_hypervisor = GenericHypervisor  # pylint: disable=invalid-name
 standalone = StandaloneGenericHypervisor  # pylint: disable=invalid-name

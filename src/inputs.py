@@ -251,4 +251,9 @@ class CLI(InputProvider):
             )
         args.hypervisor = hypervisor
 
+        if hypervisor == "bao" and not args.hyp_srcs:
+            raise ValueError(
+                "Bao hypervisor sources must be provided using --hyp-srcs."
+            )
+
         return args
