@@ -603,6 +603,7 @@ class TestFramework:
         guests_bins = os.path.join(self.wrkdir, "guests", "build")
 
         if platform.is_emulated:
+            proc = None
             try:
                 proc, _stderr_path, _errf, serial_ports = platform.launch_test(
                     run_bin, irq_flags, guests_bins, setup, self.hypervisor
@@ -616,9 +617,12 @@ class TestFramework:
                     self.run_type == "benchmark",
                 )
 
-                logger_inst.wait_for_finish(log_threads)
-
-                if proc is not None:
+                logger_inst.wait_for_finish(
+                    log_threads,
+                    timeout=platform.boot_timeout,
+                )
+            finally:
+                if proc is not None and proc.poll() is None:
                     try:
                         os.killpg(os.getpgid(proc.pid), signal.SIGTERM)
                     except (OSError, ProcessLookupError):
@@ -631,7 +635,7 @@ class TestFramework:
                         except (OSError, ProcessLookupError):
                             proc.kill()
                         proc.wait(timeout=5)
-            finally:
+
                 platform_cleanup = getattr(platform, "cleanup", None)
                 if callable(platform_cleanup):
                     platform_cleanup()
