@@ -267,7 +267,6 @@ class TestFramework:
         hypervisor_instance = hypervisor_class(wrkdir)
 
         hypervisor_instance.fetch_sources(self.hypervisor_srcs)
-        hypervisor_instance.clean(hypervisor_instance.srcs_path)
 
         out_bin_path, bin_name, elf_name = hypervisor_instance.build(
             wrkdir_imgs=guests_build_dir,

@@ -33,16 +33,12 @@ class Bao(GenericHypervisor):
     def __init__(self, wrkdir):
         """Initialize Bao source and revision metadata."""
         super().__init__(wrkdir)
-        self.git_repo = "https://github.com/bao-project/bao-hypervisor.git"
-        self.git_rev = "v2.0.0"
         self.srcs_path = None
 
     def fetch_sources(self, hypervisor_srcs):
         """Fetch Bao sources or use the user-provided source tree."""
         if hypervisor_srcs == "":
-            self.srcs_path = os.path.join(self.wrkdir, "hypervisor", "bao")
-            self.clone_hypervisor(self.git_repo, self.git_rev, self.srcs_path)
-            return
+            raise ValueError("Bao hypervisor sources were not provided.")
 
         self.srcs_path = hypervisor_srcs
         print_log(
