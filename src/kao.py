@@ -46,6 +46,7 @@ sys.path.append(KAO_TOOL_DIR)
 sys.path.append(KAO_UTILS_DIR)
 
 BAREMETAL_BENCHMARK = None
+WRKDIR_MARKER = ".kao-wrkdir"
 if os.path.exists(BENCHS_DIR) and os.listdir(BENCHS_DIR):
     sys.path.append(os.path.join(BENCHS_DIR, "guests"))
     benchmark_module = importlib.import_module("baremetal_benchmark")
@@ -87,6 +88,25 @@ def _resolve_platform_class(platforms, platform_name):
         if platform_class is not None:
             return platform_class
     return None
+
+def prepare_wrkdir(wrkdir):
+    """Create or validate a working directory owned by Bao Kao."""
+    wrkdir = os.path.abspath(wrkdir)
+    marker = os.path.join(wrkdir, WRKDIR_MARKER)
+
+    if os.path.exists(wrkdir):
+        if not os.path.isdir(wrkdir):
+            raise RuntimeError(f"Working directory is not a directory: {wrkdir}")
+        if not os.path.isfile(marker):
+            raise RuntimeError(
+                f"Refusing to use unmarked working directory: {wrkdir}"
+            )
+    else:
+        os.makedirs(wrkdir)
+        with open(marker, "x", encoding="utf-8"):
+            pass
+
+    return wrkdir
 
 class TestFramework:
     """Encapsulate workload discovery, build and execution flow."""
@@ -642,6 +662,12 @@ class TestFramework:
             return
 
     def cleanup(self):
+        marker = os.path.join(self.wrkdir, WRKDIR_MARKER)
+        if not os.path.isfile(marker):
+            raise RuntimeError(
+                f"Refusing to clean unmarked working directory: {self.wrkdir}"
+            )
+
         guest_build_path = os.path.join(self.wrkdir, "guests")
         if os.path.exists(guest_build_path):
             print_log(
@@ -893,8 +919,7 @@ def launch_tests(kao_runner, tests, platform, wrkdir):
 def main():
     print_log("INFO", "Starting Bao Kao Framework...", tab_level=0)
     print_log("INFO", f"Current working directory: {CUR_DIR}", tab_level=1)
-    wrkdir = os.path.join(CUR_DIR, "wrkdir")
-    os.makedirs(wrkdir, exist_ok=True)
+    wrkdir = prepare_wrkdir(CLI.wrkdir())
 
     kao_runner = TestFramework(wrkdir)
 
