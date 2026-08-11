@@ -256,6 +256,7 @@ class TestFramework:
                 arch=platform.architecture,
                 toolchain=platform.toolchain,
                 irq_flags=irq_flags or {},
+                log_level=self.runtime_config.get("log_level", 0),
             )
 
     @staticmethod
