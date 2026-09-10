@@ -74,16 +74,6 @@ class QemuRiscv64Virt(GenericEmulator):  # pylint: disable=too-many-instance-att
         )
         return result.returncode == 0 and f"version {self.qemu_version}" in result.stdout
 
-    def _run_setup_command(self, command, cwd=None):
-        """Run a setup command and report its failure immediately."""
-        process = super().run_command(command, cwd=cwd, log_tab_level=1)
-        _, stderr = process.communicate()
-        if process.returncode != 0:
-            detail = stderr.strip() if stderr else "no error output"
-            raise RuntimeError(
-                f"Command failed ({process.returncode}): {' '.join(command)}\n{detail}"
-            )
-
     def setup_platform(self):
         """Locate or build the supported QEMU version."""
         system_qemu = shutil.which("qemu-system-riscv64")
@@ -105,7 +95,7 @@ class QemuRiscv64Virt(GenericEmulator):  # pylint: disable=too-many-instance-att
 
         print_log("INFO", f"Cloning {self.git_repo}...", tab_level=1)
         if not os.listdir(self.srcs_dir):
-            self._run_setup_command(
+            super().run_command(
                 [
                     "git", "clone",
                     "--branch", f"v{self.qemu_version}",
@@ -113,20 +103,22 @@ class QemuRiscv64Virt(GenericEmulator):  # pylint: disable=too-many-instance-att
                     "--depth", "1",
                     self.git_repo,
                     self.srcs_dir,
-                ]
-            )
+                ],
+                log_tab_level=1,
+            ).wait()
 
         print_log("INFO", "Configuring QEMU...", tab_level=1)
-        self._run_setup_command(
+        super().run_command(
             ["./configure", "--target-list=riscv64-softmmu", "--enable-slirp"],
             cwd=self.srcs_dir,
-        )
+            log_tab_level=1,
+        ).wait()
 
         print_log("INFO", "Building QEMU (this may take a while)...", tab_level=1)
-        self._run_setup_command(
+        super().run_command(
             ["make", f"-j{os.cpu_count()}"],
-            cwd=self.srcs_dir,
-        )
+            cwd=self.srcs_dir, log_tab_level=1,
+        ).wait()
 
         if not self._supported_qemu(local_qemu):
             raise RuntimeError(
