@@ -9,6 +9,14 @@ import os
 from abc import ABC, abstractmethod
 
 
+def _serial_port(value):
+    """Normalize and validate a serial port CLI value."""
+    port = value.strip()
+    if not port:
+        raise argparse.ArgumentTypeError("serial port path cannot be empty")
+    return port
+
+
 class InputProvider(ABC):  # pylint: disable=too-few-public-methods
     """Interface for runtime configuration providers."""
 
@@ -84,6 +92,18 @@ class CLI(InputProvider):
                 'For example: --plat-virt-args="GICV3"'
             ),
             default="",
+        )
+
+        parser.add_argument(
+            "--serial-port",
+            action="append",
+            type=_serial_port,
+            metavar="PATH",
+            help=(
+                "Override a physical platform's default serial port. "
+                "Repeat this option for platforms that use multiple ports."
+            ),
+            default=None,
         )
 
         parser.add_argument(
