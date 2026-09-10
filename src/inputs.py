@@ -5,7 +5,6 @@ CLI input parsing and validation for the Bao Kao Framework.
 """
 
 import argparse
-import os
 from abc import ABC, abstractmethod
 
 
@@ -19,17 +18,6 @@ class InputProvider(ABC):  # pylint: disable=too-few-public-methods
 
 class CLI(InputProvider):
     """Command-line input provider."""
-
-    @staticmethod
-    def wrkdir():
-        """Read the working directory before parsing the full CLI."""
-        parser = argparse.ArgumentParser(add_help=False)
-        parser.add_argument(
-            "--wrkdir",
-            default=os.path.join(os.getcwd(), "wrkdir"),
-        )
-        args, _ = parser.parse_known_args()
-        return os.path.abspath(args.wrkdir)
 
     def kao_config(self, platforms=None):
         """Parse and validate framework CLI arguments."""
@@ -191,13 +179,6 @@ class CLI(InputProvider):
                 "that the sources are related to bao hypervisor."
             ),
             default="",
-        )
-
-        parser.add_argument(
-            "--wrkdir",
-            metavar="PATH",
-            help="Directory used for generated sources and build artifacts",
-            default=os.path.join(os.getcwd(), "wrkdir"),
         )
 
         args = parser.parse_args()
