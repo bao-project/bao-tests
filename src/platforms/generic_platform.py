@@ -126,7 +126,6 @@ class generic_emulator(generic_platform):  # pylint: disable=invalid-name
         """
         super().__init__(wrkdir)
         self.is_emulated = True
-        self.boot_timeout = 60
 
     @staticmethod
     def check_port_in_use(host, port):

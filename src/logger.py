@@ -261,18 +261,13 @@ class TestLogger:  # pylint: disable=too-many-instance-attributes
 
         return threads
 
-    def wait_for_finish(self, threads, timeout=None):
+    def wait_for_finish(self, threads):
         """Wait for one listener to complete and then stop all listeners."""
-        finished = self.list_events["event_thread_finished"].wait(timeout)
+        self.list_events["event_thread_finished"].wait()
         self.list_events["event_stop_listener"].set()
 
         for thread in threads:
             thread.join()
-
-        if not finished:
-            raise TimeoutError(
-                f"No test completion received within {timeout} seconds"
-            )
 
     def listener(
         self,
