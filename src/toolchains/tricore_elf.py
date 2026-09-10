@@ -25,7 +25,7 @@ class TricoreElf:
 
         # Map uname -m output to the release tarball naming convention
         platform_map = {
-            "x86_64": "Linux_x86-x64",
+            "x86_64": "Linux_x86-64",
             "aarch64": "Linux_aarch64",
         }
         self.host_platform = platform_map.get(host_platform, host_platform)
