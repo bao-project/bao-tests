@@ -59,6 +59,7 @@ bao = getattr(importlib.import_module("hypervisor.bao.bao"), "bao")
 config_renderer_module = importlib.import_module("hypervisor.bao.config_renderer")
 read_config = getattr(config_renderer_module, "read_config")
 write_config = getattr(config_renderer_module, "write_config")
+find_bao_tests = getattr(importlib.import_module("utils.codegen"), "find_bao_tests")
 standalone = getattr(importlib.import_module("hypervisor.generic"), "standalone")
 baremetal_test = getattr(importlib.import_module("baremetal"), "baremetal_test")
 
@@ -313,10 +314,7 @@ class TestFramework:
             with open(os.path.join(src_dir, fname), encoding="utf-8") as source_file:
                 content = source_file.read()
 
-            for test_nr, match in enumerate(
-                re.finditer(r'BAO_TEST\s*\(([^)]+)\)', content)
-            ):
-                args = [a.strip().strip('"') for a in match.group(1).split(",")]
+            for test_nr, args in enumerate(find_bao_tests(content)):
                 self.tests.append({
                     "id": suite_nr * 100 + test_nr,
                     "suite_nr": suite_nr,
