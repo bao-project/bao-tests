@@ -147,7 +147,7 @@ class QemuRiscv64Virt(GenericEmulator):  # pylint: disable=too-many-instance-att
         return [
             "qemu-system-riscv64",
             "-nographic",
-            "-M", "virt,aia=aplic-imsic",
+            "-M", "virt",
             "-cpu", "rv64",
             "-m", "4G",
             "-smp", "4",
