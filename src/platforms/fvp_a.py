@@ -52,7 +52,6 @@ class FvpA(GenericEmulator):  # pylint: disable=too-many-instance-attributes
         self.model_dir = os.path.join(self.srcs_dir, "FVP_Model_A")
         self.firmware_dir = os.path.join(wrkdir, "platforms", "firmware")
         self.toolchain = f"{wrkdir}/toolchains/aarch64-none-elf"
-        self.toolchain_prefix = "aarch64-none-elf-"
         self.architecture = "aarch64"
         self.irq_flags = {"GIC_version": "GICV3", "uart_idx": 0}
         self.cpu_freq = CPU_FREQ

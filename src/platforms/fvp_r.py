@@ -45,7 +45,6 @@ class FvpR(GenericEmulator):  # pylint: disable=too-many-instance-attributes
         self.srcs_dir = os.path.join(wrkdir, "platforms", "fvp_r")
         self.model_dir = os.path.join(self.srcs_dir, "FVP_Model_R")
         self.toolchain = f"{wrkdir}/toolchains/aarch64-none-elf"
-        self.toolchain_prefix = "aarch64-none-elf-"
         self.architecture = "aarch64"
         self.irq_flags = {"GIC_version": "GICV3"}
         self.cpu_freq = CPU_FREQ
