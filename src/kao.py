@@ -577,7 +577,6 @@ class TestFramework:
             "echo": args.echo,
             "platform": args.platform,
             "platform_args": args.plat_virt_args,
-            "serial_ports": args.serial_port,
             "firmware_build": not args.no_firmware_build,
             "toolchain_build": not args.no_toolchain_build,
             "hypervisor": args.hypervisor,
@@ -643,7 +642,7 @@ class TestFramework:
                     platform_cleanup()
 
         else:
-            serial_ports = self.runtime_config.get("serial_ports") or platform.get_serial_ports()
+            serial_ports = platform.get_serial_ports()
             log_threads = logger_inst.connect_to_platform_port(
                 serial_ports,
                 echo,
