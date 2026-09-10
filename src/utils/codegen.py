@@ -13,31 +13,6 @@ import sys
 import argparse
 import shutil
 import os
-import re
-
-
-_C_TOKEN_RE = re.compile(
-    r'"(?:\\.|[^"\\])*"|\'(?:\\.|[^\'\\])*\'|//[^\r\n]*|/\*.*?(?:\*/|$)',
-    re.DOTALL,
-)
-_BAO_TEST_RE = re.compile(r"BAO_TEST\s*\(([^)]*)\)", re.DOTALL)
-
-
-def _replace_c_comment(match):
-    """Replace comments with whitespace while preserving strings and newlines."""
-    token = match.group(0)
-    if not token.startswith("/"):
-        return token
-    return re.sub(r"[^\r\n]", " ", token)
-
-
-def find_bao_tests(source):
-    """Return argument lists for active BAO_TEST markers in C source."""
-    source_without_comments = _C_TOKEN_RE.sub(_replace_c_comment, source)
-    return [
-        [argument.strip().strip('"') for argument in match.group(1).split(",", 3)]
-        for match in _BAO_TEST_RE.finditer(source_without_comments)
-    ]
 
 
 def parse_args():
@@ -124,11 +99,18 @@ def generate_code(base_dir):
 
     for file in c_files:
         with open(file, "r", encoding="utf8") as c_file:
-            file_code = c_file.read()
+            file_code = c_file.readlines()
 
-        for test_args in find_bao_tests(file_code):
-            if len(test_args) >= 2:
-                suite_name, test_name = test_args[:2]
+        for line in file_code:
+            if "BAO_TEST(" in line:
+                clear_line = line.replace(" ", "")
+                clear_line = clear_line.replace("BAO_TEST(", "")
+                clear_line = clear_line.replace(")", "")
+                clear_line = clear_line.replace("\n", "")
+                clear_line = clear_line.replace("{", "")
+                suite_name = clear_line.split(",")[0]
+                test_name = clear_line.split(",")[1]
+
                 tests_list.setdefault(suite_name, []).append(test_name)
 
     return _generate_decls_and_calls(tests_list)
